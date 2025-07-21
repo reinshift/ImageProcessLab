@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图像处理实验室 - 登录</title>
+    <style>
+        /* 内联关键CSS - 确保在GitHub Pages上正常显示 */
+        .d-none { display: none !important; }
+        .btn-loading .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+    <link rel="stylesheet" href="login-style.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo区域 -->
+            <div class="logo-section">
+                <div class="logo-container" id="logo-container">
+                    <img id="app-logo" src="xdu.svg" alt="应用Logo" class="app-logo">
+                </div>
+                <h1 class="app-title">图像处理实验室</h1>
+                <p class="app-subtitle">多功能图像处理与实验平台</p>
+            </div>
+
+            <!-- 登录表单 -->
+            <div class="login-form-section">
+                <form id="login-form" class="login-form">
+                    <div class="form-group">
+                        <label for="password" class="form-label">访问密码</label>
+                        <div class="password-input-group">
+                            <input type="password" id="password" class="form-control password-input"
+                                   placeholder="请输入访问密码" required>
+                            <button type="button" class="password-toggle" id="password-toggle" title="显示/隐藏密码">
+                                👁️
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="login-btn" id="login-btn">
+                        <span class="btn-text">进入实验室</span>
+                        <div class="btn-loading d-none">
+                            <div class="spinner"></div>
+                        </div>
+                    </button>
+                </form>
+
+                <div class="error-message d-none" id="error-message">
+                    <svg class="error-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                    </svg>
+                    <span id="error-text">密码错误，请重试</span>
+                </div>
+            </div>
+
+            <!-- 功能预览 -->
+            <div class="features-section">
+                <h3 class="features-title">实验室功能</h3>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-text">图像变换</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔐</div>
+                        <div class="feature-text">图像加密</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💧</div>
+                        <div class="feature-text">水印处理</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🧪</div>
+                        <div class="feature-text">实验演示</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 背景装饰 -->
+        <div class="background-decoration">
+            <div class="decoration-circle circle-1"></div>
+            <div class="decoration-circle circle-2"></div>
+            <div class="decoration-circle circle-3"></div>
+        </div>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>

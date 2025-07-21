@@ -1,0 +1,412 @@
+/* 图像处理实验室 - 主应用样式 */
+
+/* 主题变量 */
+:root {
+    --primary-color: #667eea;
+    --primary-hover: #5a6fd8;
+    --secondary-color: #764ba2;
+    --accent-color: #f093fb;
+    --text-color: #2d3748;
+    --text-light: #4a5568;
+    --text-muted: #718096;
+    --border-color: #e2e8f0;
+    --background-light: #f7fafc;
+    --background-white: #ffffff;
+    --success-color: #38a169;
+    --error-color: #e53e3e;
+    --warning-color: #d69e2e;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 深色主题 */
+[data-theme="dark"] {
+    --text-color: #f8fafc;
+    --text-light: #e2e8f0;
+    --text-muted: #94a3b8;
+    --border-color: #64748b;
+    --background-light: #475569;
+    --background-white: #1e293b;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* 浅色主题下的body背景 */
+body {
+    background: #ffffff;
+    color: var(--text-color);
+}
+
+/* 深色主题下的body背景 */
+[data-theme="dark"] body {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    color: var(--text-color);
+}
+
+/* 主题切换按钮 */
+.theme-toggle {
+    position: relative;
+    width: 50px;
+    height: 25px;
+    background: var(--border-color);
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 1rem;
+}
+
+.theme-toggle::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 21px;
+    height: 21px;
+    background: var(--background-white);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+[data-theme="dark"] .theme-toggle {
+    background: var(--primary-color);
+}
+
+[data-theme="dark"] .theme-toggle::before {
+    transform: translateX(25px);
+}
+
+.theme-toggle:hover {
+    background: var(--primary-hover);
+}
+
+/* 加载动画 */
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid var(--border-color);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#loading-overlay p {
+    color: var(--text-color);
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* 模块卡片增强效果 */
+.module-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border-radius: 16px;
+    pointer-events: none;
+}
+
+.module-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1), transparent 70%);
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.module-card:hover::after {
+    opacity: 1;
+}
+
+/* 工作区动画 */
+.workspace {
+    animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 模块选择器动画 */
+.module-selector {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* 导航栏增强 */
+.app-navbar {
+    transition: all 0.3s ease;
+}
+
+.app-navbar:hover {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-logo {
+    transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+    transform: scale(1.1);
+}
+
+/* 按钮增强效果 */
+.nav-btn, .back-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-btn::before, .back-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.nav-btn:hover::before, .back-btn:hover::before {
+    left: 100%;
+}
+
+/* 响应式增强 */
+@media (max-width: 480px) {
+    .navbar-content {
+        flex-direction: column;
+        height: auto;
+        padding: 1rem;
+    }
+    
+    .navbar-actions {
+        margin-top: 1rem;
+        width: 100%;
+        justify-content: center;
+    }
+    
+    body {
+        padding-top: 120px;
+    }
+    
+    .module-grid {
+        gap: 1rem;
+    }
+    
+    .module-card {
+        padding: 1.5rem;
+    }
+    
+    .module-icon {
+        font-size: 2.5rem;
+    }
+    
+    .module-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* 深色模式支持 - 改善对比度 */
+[data-theme="dark"] .app-navbar {
+    background: rgba(30, 41, 59, 0.95);
+    border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .module-selector,
+[data-theme="dark"] .workspace {
+    background: var(--background-white);
+    border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .nav-btn {
+    color: var(--text-color);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .nav-btn:hover {
+    background: var(--background-light);
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+[data-theme="dark"] .navbar-title {
+    color: var(--text-color);
+}
+
+/* 打印样式 */
+@media print {
+    .app-navbar,
+    .module-selector,
+    .action-buttons {
+        display: none !important;
+    }
+    
+    .workspace {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        margin: 0;
+        padding: 1rem;
+    }
+    
+    body {
+        padding-top: 0;
+        background: white;
+        color: black;
+    }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+    .module-card {
+        border: 2px solid var(--primary-color);
+    }
+    
+    .nav-btn, .back-btn {
+        border: 2px solid var(--border-color);
+    }
+    
+    .nav-btn:hover, .back-btn:hover {
+        border-color: var(--primary-color);
+        background: var(--primary-color);
+        color: white;
+    }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .loading-spinner {
+        animation: none;
+        border: 4px solid var(--primary-color);
+    }
+}
+
+/* 焦点可见性增强 */
+.nav-btn:focus-visible,
+.back-btn:focus-visible,
+.module-card:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* 选择文本样式 */
+::selection {
+    background: rgba(102, 126, 234, 0.2);
+    color: var(--text-color);
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
+
+/* 工具提示样式 */
+[title] {
+    position: relative;
+}
+
+[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+/* 错误状态样式 */
+.error-state {
+    color: var(--error-color);
+    border-color: var(--error-color) !important;
+}
+
+.error-state::placeholder {
+    color: rgba(220, 53, 69, 0.6);
+}
+
+/* 成功状态样式 */
+.success-state {
+    color: var(--success-color);
+    border-color: var(--success-color) !important;
+}
+
+/* 警告状态样式 */
+.warning-state {
+    color: var(--warning-color);
+    border-color: var(--warning-color) !important;
+}

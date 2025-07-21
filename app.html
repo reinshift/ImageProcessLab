@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图像处理实验室 - 主应用</title>
+    <style>
+        /* 内联关键CSS - 确保布局正确 */
+        :root {
+            --primary-color: #667eea;
+            --primary-hover: #5a6fd8;
+            --secondary-color: #764ba2;
+            --accent-color: #f093fb;
+            --text-color: #333;
+            --text-light: #666;
+            --border-color: #e1e5e9;
+            --background-light: #f8f9fa;
+            --success-color: #28a745;
+            --error-color: #dc3545;
+            --warning-color: #ffc107;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: var(--text-color);
+            background: #ffffff;
+            line-height: 1.6;
+            padding-top: 70px;
+        }
+
+        .d-none { display: none !important; }
+        .d-flex { display: flex !important; }
+        .justify-content-between { justify-content: space-between !important; }
+        .align-items-center { align-items: center !important; }
+        .text-center { text-align: center !important; }
+        .mb-3 { margin-bottom: 1rem !important; }
+        .mb-4 { margin-bottom: 1.5rem !important; }
+        .img-fluid { max-width: 100%; height: auto; }
+
+        /* 容器和网格系统 */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* 导航栏 */
+        .app-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            height: 70px;
+        }
+
+        .navbar-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .navbar-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .navbar-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .navbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            background: var(--background-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* 模块切换器 */
+        .module-selector {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .module-selector h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--text-color);
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .module-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 16px;
+            padding: 2rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.3);
+        }
+
+        .module-card.active {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+        }
+
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .module-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .module-description {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        /* 工作区域 */
+        .workspace {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            min-height: 600px;
+        }
+
+        .workspace-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .workspace-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .back-btn {
+            padding: 0.5rem 1rem;
+            background: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .navbar-content {
+                padding: 0 1rem;
+            }
+            
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .workspace {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="app-style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <nav class="app-navbar">
+        <div class="navbar-content">
+            <div class="navbar-brand">
+                <img id="navbar-logo" src="xdu.svg" alt="Logo" class="navbar-logo">
+                <span class="navbar-title">图像处理实验室</span>
+            </div>
+            <div class="navbar-actions">
+                <button class="nav-btn" id="help-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                    </svg>
+                    帮助
+                </button>
+                <button class="theme-toggle" id="theme-toggle" title="切换主题"></button>
+                <button class="nav-btn" id="logout-btn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16,17 21,12 16,7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                    退出
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 模块选择器 -->
+        <div class="module-selector" id="module-selector">
+            <h2>选择实验模块</h2>
+            <div class="module-grid">
+                <div class="module-card" data-module="transform">
+                    <span class="module-icon">🎨</span>
+                    <h3 class="module-title">图像变换</h3>
+                    <p class="module-description">灰度转换、HSV调节、RGB调色、对比度、旋转、平移、镜像等基础变换操作</p>
+                </div>
+                
+                <div class="module-card" data-module="encryption">
+                    <span class="module-icon">🔐</span>
+                    <h3 class="module-title">图像加密</h3>
+                    <p class="module-description">Arnold变换、行列像素置乱等图像加密算法的演示与实验</p>
+                </div>
+                
+                <div class="module-card" data-module="watermark">
+                    <span class="module-icon">💧</span>
+                    <h3 class="module-title">水印处理</h3>
+                    <p class="module-description">水印添加、透明度处理、水印位置调节等水印相关功能</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 工作区域 -->
+        <div class="workspace d-none" id="workspace">
+            <div class="workspace-header">
+                <h2 class="workspace-title" id="workspace-title">工作区</h2>
+                <button class="back-btn" id="back-btn">返回模块选择</button>
+            </div>
+            
+            <div class="workspace-content" id="workspace-content">
+                <!-- 动态加载的模块内容 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 加载提示 -->
+    <div id="loading-overlay" class="d-none">
+        <div class="loading-spinner"></div>
+        <p>加载中，请稍候...</p>
+    </div>
+
+    <script src="utils.js"></script>
+    <script src="app.js"></script>
+    <script src="modules/transform.js"></script>
+    <script src="modules/encryption.js"></script>
+    <script src="modules/watermark.js"></script>
+</body>
+</html>
