@@ -202,6 +202,11 @@ function showHelp() {
                     <li>对比度：调整图像的对比度</li>
                     <li>几何变换：旋转、平移、镜像操作</li>
                 </ul>
+                <div style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-top: 1rem; border-left: 4px solid var(--primary-color);">
+                    <strong style="color: var(--primary-color);">💡 操作技巧：</strong><br>
+                    • 双击滑动条可快速恢复该参数的默认值<br>
+                    • 双击左侧参数标签文字同样可以重置<br>
+                </div>
             </div>
             
             <div style="margin-bottom: 2rem;">

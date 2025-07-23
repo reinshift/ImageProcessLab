@@ -175,62 +175,324 @@
             padding-left: 1.5rem;
         }
 
+        /* 固定目录导航 */
+        .floating-toc {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 280px;
+            max-height: calc(100vh - 120px);
+            background: var(--background-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .floating-toc.visible {
+            transform: translateX(0);
+        }
+
+        .floating-toc h4 {
+            margin: 0 0 1rem 0;
+            color: var(--primary-color);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .floating-toc ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .floating-toc li {
+            margin: 0.3rem 0;
+        }
+
+        .floating-toc a {
+            color: var(--text-color);
+            text-decoration: none;
+            padding: 0.4rem 0.8rem;
+            display: block;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .floating-toc a:hover {
+            background: var(--background-light);
+            border-left-color: var(--primary-color);
+        }
+
+        .floating-toc a.active {
+            background: var(--primary-color);
+            color: white;
+            border-left-color: var(--secondary-color);
+        }
+
+        /* 目录切换按钮 */
+        .toc-toggle {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        .toc-toggle:hover {
+            background: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        .toc-toggle.active {
+            background: var(--secondary-color);
+        }
+
+        /* 进度指示器 */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            z-index: 1002;
+            transition: width 0.1s ease;
+        }
+
+        @media (max-width: 1200px) {
+            .floating-toc {
+                width: 250px;
+            }
+        }
+
         @media (max-width: 768px) {
             .theory-container {
                 padding: 1rem;
+                margin-right: 0;
             }
-            
+
             .formula {
                 font-size: 0.9rem;
                 padding: 1rem;
             }
-            
+
             .color-space-demo {
                 grid-template-columns: 1fr;
+            }
+
+            .floating-toc {
+                width: calc(100vw - 40px);
+                right: 20px;
+                left: 20px;
+                top: 70px;
+                max-height: calc(100vh - 100px);
+            }
+
+            .toc-toggle {
+                top: 70px;
+                right: 30px;
+            }
+
+            /* 在移动设备上隐藏原始目录 */
+            .toc {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .floating-toc {
+                width: calc(100vw - 20px);
+                right: 10px;
+                left: 10px;
+                padding: 0.8rem;
+            }
+
+            .toc-toggle {
+                right: 20px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.1rem;
             }
         }
     </style>
 </head>
 <body>
+    <!-- 阅读进度条 -->
+    <div class="reading-progress"></div>
+
+    <!-- 目录切换按钮 -->
+    <button class="toc-toggle" id="tocToggle" title="显示/隐藏目录">
+        📚
+    </button>
+
+    <!-- 浮动目录 -->
+    <div class="floating-toc" id="floatingToc">
+        <h4>
+            📚 目录
+            <button style="background: none; border: none; color: var(--text-color); cursor: pointer; font-size: 1.2rem;" onclick="toggleFloatingToc()">×</button>
+        </h4>
+        <ul>
+            <li><a href="#introduction" data-section="introduction">1. 引言：矩阵理论与图像处理</a></li>
+            <li><a href="#matrix-fundamentals" data-section="matrix-fundamentals">2. 矩阵理论基础</a></li>
+            <li><a href="#image-representation" data-section="image-representation">3. 数字图像的矩阵表示</a></li>
+            <li><a href="#linear-transforms" data-section="linear-transforms">4. 线性变换与图像处理</a></li>
+            <li><a href="#matrix-encryption" data-section="matrix-encryption">5. 基于矩阵的图像加密</a></li>
+            <li><a href="#watermark-theory" data-section="watermark-theory">6. 数字水印的数学模型</a></li>
+        </ul>
+    </div>
+
     <a href="app.html" class="back-btn">← 返回主页</a>
-    
+
     <div class="theory-container">
         <div class="theory-header">
-            <h1>数字图像处理的数学原理</h1>
-            <p>基于矩阵理论的图像处理算法与实现</p>
+            <h1>矩阵理论在数字图像处理中的应用</h1>
+            <p>从线性代数基础到图像处理算法的数学原理</p>
         </div>
 
         <!-- 目录 -->
         <div class="toc">
             <h3>📚 目录</h3>
             <ul>
-                <li><a href="#introduction">1. 引言</a></li>
-                <li><a href="#image-representation">2. 数字图像的数学表示</a></li>
-                <li><a href="#color-spaces">3. 颜色空间理论</a></li>
-                <li><a href="#image-transforms">4. 图像变换算法</a></li>
-                <li><a href="#encryption-algorithms">5. 图像加密算法</a></li>
-                <li><a href="#watermark-theory">6. 数字水印理论</a></li>
+                <li><a href="#introduction">1. 引言：矩阵理论与图像处理</a></li>
+                <li><a href="#matrix-fundamentals">2. 矩阵理论基础</a></li>
+                <li><a href="#image-representation">3. 数字图像的矩阵表示</a></li>
+                <li><a href="#linear-transforms">4. 线性变换与图像处理</a></li>
+                <li><a href="#matrix-encryption">5. 基于矩阵的图像加密</a></li>
+                <li><a href="#watermark-theory">6. 数字水印的数学模型</a></li>
             </ul>
         </div>
 
-        <!-- 1. 引言 -->
+        <!-- 1. 引言：矩阵理论与图像处理 -->
         <div class="theory-section" id="introduction">
-            <h2>1. 引言</h2>
+            <h2>1. 引言：矩阵理论与图像处理</h2>
+
+            <h3>1.1 矩阵理论的重要性</h3>
             <p>
-                矩阵理论是数学的重要分支，在数字图像处理领域有着广泛的应用。数字图像处理（Digital Image Processing）
-                是通过计算机对图像进行去除噪声、增强、复原、分割、提取特征等处理的方法和技术。
+                矩阵理论是线性代数的核心内容，为现代科学技术提供了强有力的数学工具。在数字图像处理领域，
+                矩阵不仅是数据表示的自然形式，更是算法设计的理论基础。
             </p>
+
+            <h3>1.2 图像处理中的矩阵应用</h3>
             <p>
-                本系统基于矩阵运算实现了多种图像处理算法，包括图像变换、加密算法和数字水印技术。
-                这些算法的核心都是对图像像素矩阵进行数学变换，体现了矩阵理论在实际应用中的重要价值。
+                数字图像本质上是一个二维或三维数值矩阵，每个矩阵元素对应图像中的像素值。
+                基于这种矩阵表示，我们可以运用线性代数的理论和方法来：
             </p>
+            <ul>
+                <li><strong>图像变换</strong>：通过矩阵运算实现旋转、缩放、平移等几何变换</li>
+                <li><strong>颜色处理</strong>：利用矩阵乘法进行颜色空间转换</li>
+                <li><strong>图像加密</strong>：基于矩阵置换和变换实现图像加密算法</li>
+                <li><strong>数字水印</strong>：运用矩阵运算嵌入和提取水印信息</li>
+            </ul>
+
+            <h3>1.3 本章学习目标</h3>
+            <p>
+                通过本章学习，读者将掌握：
+            </p>
+            <ol>
+                <li>矩阵理论在图像处理中的基本概念和应用</li>
+                <li>数字图像的矩阵表示方法</li>
+                <li>基于矩阵运算的图像处理算法原理</li>
+                <li>线性变换在图像处理中的具体应用</li>
+            </ol>
         </div>
 
-        <!-- 2. 数字图像的数学表示 -->
+        <!-- 2. 矩阵理论基础 -->
+        <div class="theory-section" id="matrix-fundamentals">
+            <h2>2. 矩阵理论基础</h2>
+
+            <h3>2.1 矩阵的定义与表示</h3>
+            <p>矩阵是按矩形阵列排列的数的集合。一个$m \times n$矩阵$\mathbf{A}$可以表示为：</p>
+            <div class="formula">
+                $$\mathbf{A} = \begin{bmatrix}
+                a_{11} & a_{12} & \cdots & a_{1n} \\
+                a_{21} & a_{22} & \cdots & a_{2n} \\
+                \vdots & \vdots & \ddots & \vdots \\
+                a_{m1} & a_{m2} & \cdots & a_{mn}
+                \end{bmatrix}$$
+            </div>
+            <p>其中$a_{ij}$表示矩阵第$i$行第$j$列的元素。</p>
+
+            <h3>2.2 矩阵的基本运算</h3>
+
+            <div class="algorithm-box">
+                <h4>矩阵加法</h4>
+                <p>设$\mathbf{A} = (a_{ij})_{m \times n}$，$\mathbf{B} = (b_{ij})_{m \times n}$，则：</p>
+                <div class="formula">
+                    $$\mathbf{C} = \mathbf{A} + \mathbf{B} = (a_{ij} + b_{ij})_{m \times n}$$
+                </div>
+            </div>
+
+            <div class="algorithm-box">
+                <h4>矩阵乘法</h4>
+                <p>设$\mathbf{A} = (a_{ik})_{m \times p}$，$\mathbf{B} = (b_{kj})_{p \times n}$，则：</p>
+                <div class="formula">
+                    $$\mathbf{C} = \mathbf{A}\mathbf{B} = \left(\sum_{k=1}^{p} a_{ik}b_{kj}\right)_{m \times n}$$
+                </div>
+                <p>矩阵乘法满足结合律但不满足交换律：$\mathbf{A}\mathbf{B} \neq \mathbf{B}\mathbf{A}$（一般情况下）</p>
+            </div>
+
+            <h3>2.3 特殊矩阵</h3>
+
+            <div class="algorithm-box">
+                <h4>单位矩阵</h4>
+                <p>$n$阶单位矩阵$\mathbf{I}_n$的定义：</p>
+                <div class="formula">
+                    $$\mathbf{I}_n = \begin{bmatrix}
+                    1 & 0 & \cdots & 0 \\
+                    0 & 1 & \cdots & 0 \\
+                    \vdots & \vdots & \ddots & \vdots \\
+                    0 & 0 & \cdots & 1
+                    \end{bmatrix}$$
+                </div>
+                <p>性质：$\mathbf{A}\mathbf{I} = \mathbf{I}\mathbf{A} = \mathbf{A}$</p>
+            </div>
+
+            <div class="algorithm-box">
+                <h4>置换矩阵</h4>
+                <p>置换矩阵是每行每列都恰好有一个1，其余元素为0的矩阵。例如：</p>
+                <div class="formula">
+                    $$\mathbf{P} = \begin{bmatrix}
+                    0 & 1 & 0 \\
+                    0 & 0 & 1 \\
+                    1 & 0 & 0
+                    \end{bmatrix}$$
+                </div>
+                <p>置换矩阵用于重新排列矩阵的行或列，在图像加密中有重要应用。</p>
+            </div>
+        </div>
+
+        <!-- 3. 数字图像的矩阵表示 -->
         <div class="theory-section" id="image-representation">
-            <h2>2. 数字图像的数学表示</h2>
+            <h2>3. 数字图像的矩阵表示</h2>
             
-            <h3>2.1 图像矩阵表示</h3>
+            <h3>3.1 从连续图像到离散矩阵</h3>
+            <p>
+                自然界中的图像是连续的二维函数$f(x,y)$，其中$(x,y)$表示空间坐标，$f$表示该点的亮度值。
+                数字图像处理需要将连续图像离散化为矩阵形式，这个过程包括采样和量化两个步骤。
+            </p>
+
+            <h3>3.2 图像的矩阵表示</h3>
             <p>数字图像可以用矩阵来表示，其中每个矩阵元素对应图像中的一个像素点。</p>
             
             <div class="algorithm-box">
@@ -262,227 +524,151 @@
             </div>
         </div>
 
-        <!-- 3. 颜色空间理论 -->
-        <div class="theory-section" id="color-spaces">
-            <h2>3. 颜色空间理论</h2>
+        <!-- 4. 线性变换与图像处理 -->
+        <div class="theory-section" id="linear-transforms">
+            <h2>4. 线性变换与图像处理</h2>
 
-            <h3>3.1 RGB颜色空间</h3>
-            <p>RGB颜色空间是基于光的三原色（红、绿、蓝）的加色模型。任意颜色可以表示为：</p>
-            <div class="formula">
-                $$C = \alpha R + \beta G + \gamma B$$
-            </div>
-            <p>其中 $\alpha, \beta, \gamma \in [0, 1]$ 为各颜色分量的权重系数。</p>
-
-            <h3>3.2 HSV颜色空间</h3>
-            <p>HSV颜色空间更符合人类对颜色的感知，包含三个分量：</p>
-            <ul>
-                <li><strong>H (Hue)</strong>: 色调，表示颜色的种类，范围 [0°, 360°]</li>
-                <li><strong>S (Saturation)</strong>: 饱和度，表示颜色的纯度，范围 [0, 1]</li>
-                <li><strong>V (Value)</strong>: 明度，表示颜色的亮度，范围 [0, 1]</li>
-            </ul>
+            <h3>4.1 颜色空间的矩阵表示</h3>
+            <p>颜色空间转换本质上是线性变换，可以用矩阵乘法来实现。</p>
 
             <div class="algorithm-box">
-                <h4>RGB到HSV的转换算法</h4>
-                <p>设 $R, G, B \in [0, 1]$，转换公式如下：</p>
+                <h4>RGB颜色空间</h4>
+                <p>RGB颜色空间基于三原色的线性组合。对于像素点$(x,y)$，其颜色向量为：</p>
                 <div class="formula">
-                    $$\begin{align}
-                    \text{max} &= \max(R, G, B) \\
-                    \text{min} &= \min(R, G, B) \\
-                    \Delta &= \text{max} - \text{min}
-                    \end{align}$$
+                    $$\mathbf{c}(x,y) = \begin{bmatrix} R(x,y) \\ G(x,y) \\ B(x,y) \end{bmatrix}$$
                 </div>
-
-                <p><strong>明度 V：</strong></p>
-                <div class="formula">$$V = \text{max}$$</div>
-
-                <p><strong>饱和度 S：</strong></p>
-                <div class="formula">
-                    $$S = \begin{cases}
-                    0 & \text{if } \text{max} = 0 \\
-                    \frac{\Delta}{\text{max}} & \text{otherwise}
-                    \end{cases}$$
-                </div>
-
-                <p><strong>色调 H：</strong></p>
-                <div class="formula">
-                    $$H = \begin{cases}
-                    \text{undefined} & \text{if } \Delta = 0 \\
-                    60° \times \frac{G-B}{\Delta} & \text{if } \text{max} = R \\
-                    60° \times \left(2+\frac{B-R}{\Delta}\right) & \text{if } \text{max} = G \\
-                    60° \times \left(4+\frac{R-G}{\Delta}\right) & \text{if } \text{max} = B
-                    \end{cases}$$
-                </div>
+                <p>其中 $R, G, B \in [0, 255]$ 分别表示红、绿、蓝三个颜色分量。</p>
             </div>
 
-            <h3>3.3 灰度化算法</h3>
-            <p>灰度化是将彩色图像转换为灰度图像的过程。本系统实现了多种灰度化方法：</p>
+            <h3>4.2 灰度化的矩阵变换</h3>
+            <p>灰度化是将彩色图像转换为灰度图像的线性变换过程，可以用矩阵乘法表示：</p>
 
             <div class="algorithm-box">
-                <h4>加权平均法（推荐）</h4>
-                <p>基于人眼对不同颜色敏感度的加权平均：</p>
+                <h4>灰度化变换矩阵</h4>
+                <p>RGB到灰度的转换可以表示为：</p>
                 <div class="formula">
-                    $$\text{Gray} = 0.299 \times R + 0.587 \times G + 0.114 \times B$$
+                    $$\text{Gray} = \begin{bmatrix} 0.299 & 0.587 & 0.114 \end{bmatrix} \begin{bmatrix} R \\ G \\ B \end{bmatrix}$$
                 </div>
-                <p>这个公式考虑了人眼对绿色最敏感，对蓝色最不敏感的特性。</p>
+                <p>这个变换矩阵$\mathbf{W} = [0.299, 0.587, 0.114]$基于人眼视觉特性确定，体现了人眼对不同颜色的敏感度差异。</p>
             </div>
 
             <div class="algorithm-box">
-                <h4>其他灰度化方法</h4>
+                <h4>其他灰度化变换</h4>
                 <p><strong>简单平均法：</strong></p>
-                <div class="formula">$$\text{Gray} = \frac{R + G + B}{3}$$</div>
+                <div class="formula">
+                    $$\text{Gray} = \begin{bmatrix} \frac{1}{3} & \frac{1}{3} & \frac{1}{3} \end{bmatrix} \begin{bmatrix} R \\ G \\ B \end{bmatrix}$$
+                </div>
 
                 <p><strong>最大值法：</strong></p>
                 <div class="formula">$$\text{Gray} = \max(R, G, B)$$</div>
-
-                <p><strong>单通道法：</strong></p>
-                <div class="formula">$$\text{Gray} = G \quad \text{（仅取绿色通道）}$$</div>
+                <p>注：最大值法不是线性变换，但在某些应用中有特殊用途。</p>
             </div>
 
-            <div class="color-space-demo">
-                <div class="color-demo-item">
-                    <div class="color-sample" style="background: rgb(255, 100, 100);"></div>
-                    <p><strong>RGB示例</strong><br>R:255, G:100, B:100</p>
-                </div>
-                <div class="color-demo-item">
-                    <div class="color-sample" style="background: hsl(0, 100%, 70%);"></div>
-                    <p><strong>HSV示例</strong><br>H:0°, S:100%, V:70%</p>
-                </div>
-                <div class="color-demo-item">
-                    <div class="color-sample" style="background: rgb(150, 150, 150);"></div>
-                    <p><strong>灰度示例</strong><br>Gray:150</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 4. 图像变换算法 -->
-        <div class="theory-section" id="image-transforms">
-            <h2>4. 图像变换算法</h2>
-
-            <h3>4.1 色彩变换</h3>
+            <h3>4.3 几何变换的矩阵表示</h3>
+            <p>几何变换是图像处理中的重要操作，可以用齐次坐标系统和变换矩阵来统一表示。</p>
 
             <div class="algorithm-box">
-                <h4>亮度调节</h4>
-                <p>通过对HSV颜色空间中的V分量进行线性变换：</p>
+                <h4>齐次坐标系统</h4>
+                <p>在齐次坐标系统中，二维点$(x,y)$表示为三维向量$(x,y,1)^T$：</p>
                 <div class="formula">
-                    $$V' = V \times k_{\text{brightness}}$$
+                    $$\mathbf{p} = \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$$
                 </div>
-                <p>其中 $k_{\text{brightness}} > 1$ 增加亮度，$k_{\text{brightness}} < 1$ 降低亮度。</p>
+                <p>这样可以用$3 \times 3$矩阵统一表示平移、旋转、缩放等变换。</p>
             </div>
-
-            <div class="algorithm-box">
-                <h4>对比度调节</h4>
-                <p>对每个像素值进行线性变换：</p>
-                <div class="formula">
-                    $$I'(x,y) = \alpha \times I(x,y) + \beta$$
-                </div>
-                <p>其中：</p>
-                <ul>
-                    <li>$\alpha > 1$: 增加对比度</li>
-                    <li>$0 < \alpha < 1$: 降低对比度</li>
-                    <li>$\beta$: 亮度偏移量</li>
-                </ul>
-            </div>
-
-            <div class="algorithm-box">
-                <h4>饱和度调节</h4>
-                <p>通过调节HSV颜色空间中的S分量：</p>
-                <div class="formula">
-                    $$S' = S \times k_{\text{saturation}}$$
-                </div>
-                <p>其中 $k_{\text{saturation}} \in [0, 2]$，值越大饱和度越高。</p>
-            </div>
-
-            <h3>4.2 几何变换</h3>
-            <p>几何变换使用齐次坐标系统，通过$3 \times 3$变换矩阵实现：</p>
-            <div class="formula">
-                $$\begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} a & b & c \\ d & e & f \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$$
-            </div>
+            <h3>4.4 基本几何变换矩阵</h3>
 
             <div class="algorithm-box">
                 <h4>平移变换</h4>
                 <p>将图像在水平和垂直方向上移动：</p>
                 <div class="formula">
-                    $$\begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} 1 & 0 & dx \\ 0 & 1 & dy \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$$
+                    $$\mathbf{T}(d_x, d_y) = \begin{bmatrix} 1 & 0 & d_x \\ 0 & 1 & d_y \\ 0 & 0 & 1 \end{bmatrix}$$
                 </div>
-                <p>其中 $dx, dy$ 分别为水平和垂直方向的位移量。</p>
+                <p>变换后的坐标：$\mathbf{p}' = \mathbf{T} \mathbf{p}$</p>
             </div>
 
             <div class="algorithm-box">
                 <h4>缩放变换</h4>
                 <p>改变图像的尺寸：</p>
                 <div class="formula">
-                    $$\begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} s_x & 0 & 0 \\ 0 & s_y & 0 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$$
+                    $$\mathbf{S}(s_x, s_y) = \begin{bmatrix} s_x & 0 & 0 \\ 0 & s_y & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
                 </div>
-                <p>其中 $s_x, s_y$ 分别为水平和垂直方向的缩放因子。</p>
+                <p>其中$s_x, s_y$分别为水平和垂直方向的缩放因子。</p>
             </div>
 
             <div class="algorithm-box">
                 <h4>旋转变换</h4>
-                <p>绕原点逆时针旋转角度 $\theta$：</p>
+                <p>绕原点逆时针旋转角度$\theta$：</p>
                 <div class="formula">
-                    $$\begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$$
+                    $$\mathbf{R}(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta & 0 \\ \sin\theta & \cos\theta & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
                 </div>
+                <p>旋转变换是正交变换，满足$\mathbf{R}^{-1} = \mathbf{R}^T$。</p>
             </div>
 
-            <div class="algorithm-box">
-                <h4>镜像变换</h4>
-                <p><strong>水平镜像：</strong></p>
-                <div class="formula">
-                    $$\begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} -1 & 0 & w \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$$
-                </div>
-
-                <p><strong>垂直镜像：</strong></p>
-                <div class="formula">
-                    $$\begin{bmatrix} x' \\ y' \\ 1 \end{bmatrix} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & -1 & h \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} x \\ y \\ 1 \end{bmatrix}$$
-                </div>
-                <p>其中 $w, h$ 分别为图像的宽度和高度。</p>
+            <h3>4.5 复合变换</h3>
+            <p>多个几何变换可以通过矩阵乘法组合：</p>
+            <div class="formula">
+                $$\mathbf{T}_{\text{复合}} = \mathbf{T}_n \mathbf{T}_{n-1} \cdots \mathbf{T}_2 \mathbf{T}_1$$
             </div>
+            <p>注意：矩阵乘法不满足交换律，变换的顺序会影响最终结果。</p>
         </div>
 
-        <!-- 5. 图像加密算法 -->
-        <div class="theory-section" id="encryption-algorithms">
-            <h2>5. 图像加密算法</h2>
+        <!-- 5. 基于矩阵的图像加密 -->
 
-            <h3>5.1 行列置乱加密</h3>
-            <p>基于置换矩阵的思想，通过打乱图像矩阵的行列顺序实现加密。</p>
+
+        <div class="theory-section" id="matrix-encryption">
+            <h2>5. 基于矩阵的图像加密</h2>
+
+            <h3>5.1 置换矩阵与图像置乱</h3>
+            <p>
+                图像加密的一个重要方法是基于置换矩阵的像素位置置乱。置换矩阵是一种特殊的方阵，
+                每行每列都恰好有一个1，其余元素为0。
+            </p>
 
             <div class="algorithm-box">
-                <h4>行置乱算法</h4>
-                <p>生成随机行置换序列 $P_{\text{row}} = [p_1, p_2, \ldots, p_m]$，其中 $p_i \in [0, m-1]$：</p>
+                <h4>置换矩阵的性质</h4>
+                <p>设$\mathbf{P}$为$n \times n$置换矩阵，则：</p>
+                <ul>
+                    <li>$\mathbf{P}^T \mathbf{P} = \mathbf{I}$（正交矩阵）</li>
+                    <li>$\mathbf{P}^{-1} = \mathbf{P}^T$（逆矩阵等于转置）</li>
+                    <li>$\det(\mathbf{P}) = \pm 1$（行列式为±1）</li>
+                </ul>
+            </div>
+
+            <h3>5.2 行列置乱加密算法</h3>
+            <p>通过置换矩阵重新排列图像矩阵的行和列，实现图像加密。</p>
+
+            <div class="algorithm-box">
+                <h4>行置乱的矩阵表示</h4>
+                <p>设图像矩阵为$\mathbf{I}_{m \times n}$，行置换矩阵为$\mathbf{P}_r$，则行置乱可表示为：</p>
                 <div class="formula">
-                    $$I'(i, j) = I(P_{\text{row}}[i], j)$$
+                    $$\mathbf{I}' = \mathbf{P}_r \mathbf{I}$$
                 </div>
-                <p>解密时使用逆置换：</p>
+                <p>其中$\mathbf{P}_r$是$m \times m$的置换矩阵。解密时：</p>
                 <div class="formula">
-                    $$I(P_{\text{row}}[i], j) = I'(i, j)$$
+                    $$\mathbf{I} = \mathbf{P}_r^{-1} \mathbf{I}' = \mathbf{P}_r^T \mathbf{I}'$$
                 </div>
             </div>
 
             <div class="algorithm-box">
-                <h4>列置乱算法</h4>
-                <p>生成随机列置换序列 $P_{\text{col}} = [q_1, q_2, \ldots, q_n]$，其中 $q_j \in [0, n-1]$：</p>
+                <h4>列置乱的矩阵表示</h4>
+                <p>列置乱可表示为右乘置换矩阵：</p>
                 <div class="formula">
-                    $$I'(i, j) = I(i, P_{\text{col}}[j])$$
+                    $$\mathbf{I}' = \mathbf{I} \mathbf{P}_c$$
                 </div>
-                <p>解密时使用逆置换：</p>
-                <div class="formula">
-                    $$I(i, P_{\text{col}}[j]) = I'(i, j)$$
-                </div>
+                <p>其中$\mathbf{P}_c$是$n \times n$的置换矩阵。</p>
             </div>
 
             <div class="algorithm-box">
-                <h4>Fisher-Yates洗牌算法</h4>
-                <p>用于生成随机置换序列的算法：</p>
+                <h4>行列组合置乱</h4>
+                <p>同时进行行列置乱：</p>
                 <div class="formula">
-                    for i = n-1 down to 1 do<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;j = random(0, i)<br>
-                    &nbsp;&nbsp;&nbsp;&nbsp;swap(array[i], array[j])
+                    $$\mathbf{I}' = \mathbf{P}_r \mathbf{I} \mathbf{P}_c$$
                 </div>
-                <p>该算法保证每种排列的概率相等，时间复杂度为 O(n)。</p>
+                <p>这种双重置乱提供了更强的加密效果。</p>
             </div>
 
-            <h3>5.2 Arnold变换加密</h3>
-            <p>Arnold变换是一种基于矩阵运算的图像置乱方法，适用于正方形图像。</p>
+            <h3>5.3 Arnold变换</h3>
+            <p>Arnold变换（猫映射）是一种基于线性变换的混沌加密方法，由数学家Vladimir Arnold提出。</p>
 
             <div class="algorithm-box">
                 <h4>Arnold变换公式</h4>
@@ -518,96 +704,148 @@
             </div>
 
             <div class="algorithm-box">
-                <h4>Arnold变换的周期性</h4>
-                <p>Arnold变换具有周期性，即存在正整数$T$使得：</p>
+                <h4>Arnold变换的数学性质</h4>
+                <p><strong>1. 可逆性：</strong>Arnold变换矩阵的行列式为1，保证变换可逆。</p>
                 <div class="formula">
-                    $$A^T \equiv I \pmod{N}$$
+                    $$\det\begin{bmatrix} 1 & a \\ b & ab+1 \end{bmatrix} = (ab+1) - ab = 1$$
                 </div>
-                <p>其中$A$为Arnold变换矩阵，$I$为单位矩阵。周期$T$的大小与图像尺寸$N$和参数$a,b$有关。</p>
-            </div>
 
-            <h3>5.3 图像裁剪算法</h3>
-            <p>为了满足Arnold变换对正方形图像的要求，需要对非正方形图像进行裁剪。</p>
+                <p><strong>2. 周期性：</strong>存在正整数$T$使得$\mathbf{A}^T \equiv \mathbf{I} \pmod{N}$</p>
 
-            <div class="algorithm-box">
-                <h4>中心裁剪算法</h4>
-                <p>从原图像中心裁剪出最大的正方形区域：</p>
-                <div class="formula">
-                    $$\begin{align}
-                    \text{size} &= \min(\text{width}, \text{height}) \\
-                    x_{\text{start}} &= \frac{\text{width} - \text{size}}{2} \\
-                    y_{\text{start}} &= \frac{\text{height} - \text{size}}{2}
-                    \end{align}$$
-                </div>
-                <p>裁剪区域为 $[x_{\text{start}}, y_{\text{start}}, x_{\text{start}}+\text{size}, y_{\text{start}}+\text{size}]$。</p>
+                <p><strong>3. 混沌性：</strong>相邻像素经变换后位置分散，具有良好的扩散效果。</p>
             </div>
         </div>
-
-        <!-- 6. 数字水印理论 -->
+        <!-- 6. 数字水印的数学模型 -->
         <div class="theory-section" id="watermark-theory">
-            <h2>6. 数字水印理论</h2>
+            <h2>6. 数字水印的数学模型</h2>
 
-            <h3>6.1 数字水印基本概念</h3>
-            <p>数字水印是在数字媒体中嵌入标识信息的技术，用于版权保护、内容认证等目的。</p>
-
-            <div class="algorithm-box">
-                <h4>水印嵌入模型</h4>
-                <p>设原始图像为$I$，水印为$W$，嵌入强度为$\alpha$，则含水印图像$I'$为：</p>
-                <div class="formula">
-                    $$I'(x,y) = I(x,y) + \alpha \times W(x,y)$$
-                </div>
-                <p>其中$\alpha$控制水印的可见性和鲁棒性的平衡。</p>
-            </div>
-
-            <h3>6.2 图像水印算法</h3>
+            <h3>6.1 水印系统的矩阵表示</h3>
+            <p>
+                数字水印系统可以用矩阵运算来描述。设原始图像矩阵为$\mathbf{I}$，水印矩阵为$\mathbf{W}$，
+                则水印嵌入过程可以表示为：
+            </p>
 
             <div class="algorithm-box">
-                <h4>透明度混合算法</h4>
-                <p>使用Alpha混合实现水印的透明叠加：</p>
+                <h4>加性水印模型</h4>
+                <p>最简单的水印嵌入模型：</p>
                 <div class="formula">
-                    $$\begin{align}
-                    R' &= (1-\alpha) \times R_{\text{bg}} + \alpha \times R_{\text{wm}} \\
-                    G' &= (1-\alpha) \times G_{\text{bg}} + \alpha \times G_{\text{wm}} \\
-                    B' &= (1-\alpha) \times B_{\text{bg}} + \alpha \times B_{\text{wm}}
-                    \end{align}$$
+                    $$\mathbf{I}' = \mathbf{I} + \alpha \mathbf{W}$$
                 </div>
-                <p>其中$\alpha \in [0,1]$为透明度参数，$\text{bg}$表示背景图像，$\text{wm}$表示水印图像。</p>
+                <p>其中：</p>
+                <ul>
+                    <li>$\mathbf{I}'$ - 含水印图像矩阵</li>
+                    <li>$\mathbf{I}$ - 原始图像矩阵</li>
+                    <li>$\mathbf{W}$ - 水印矩阵</li>
+                    <li>$\alpha$ - 水印强度系数</li>
+                </ul>
             </div>
 
             <div class="algorithm-box">
-                <h4>水印位置计算</h4>
-                <p>根据预设位置和偏移量计算水印的实际坐标：</p>
+                <h4>乘性水印模型</h4>
+                <p>考虑图像内容自适应的水印嵌入：</p>
                 <div class="formula">
-                    $$\begin{align}
-                    x_{\text{wm}} &= x_{\text{base}} + \text{offset}_x \\
-                    y_{\text{wm}} &= y_{\text{base}} + \text{offset}_y
-                    \end{align}$$
+                    $$\mathbf{I}' = \mathbf{I} \odot (\mathbf{1} + \alpha \mathbf{W})$$
                 </div>
-                <p>其中$(x_{\text{base}}, y_{\text{base}})$为基准位置，可以是九个预设位置之一。</p>
+                <p>其中$\odot$表示矩阵的逐元素乘法（Hadamard积），$\mathbf{1}$为全1矩阵。</p>
             </div>
 
-            <h3>6.3 文字水印算法</h3>
+            <h3>6.2 背景透明化的数学原理</h3>
+            <p>在水印处理中，首先需要将水印图像的纯色背景透明化，这涉及颜色相似度检测和Alpha通道计算。</p>
 
             <div class="algorithm-box">
-                <h4>文字渲染</h4>
-                <p>使用Canvas API渲染文字水印：</p>
+                <h4>颜色距离计算</h4>
+                <p>使用欧几里得距离判断像素是否为背景色：</p>
                 <div class="formula">
-                    ctx.font = size + "px " + fontFamily<br>
-                    ctx.fillStyle = color<br>
-                    ctx.globalAlpha = opacity<br>
-                    ctx.fillText(text, x, y)
+                    $$d = \sqrt{(R - R_{\text{bg}})^2 + (G - G_{\text{bg}})^2 + (B - B_{\text{bg}})^2}$$
                 </div>
+                <p>其中$(R_{\text{bg}}, G_{\text{bg}}, B_{\text{bg}})$为背景色，通常取图像左上角像素值。</p>
             </div>
 
             <div class="algorithm-box">
-                <h4>文字旋转变换</h4>
-                <p>对文字水印应用旋转变换：</p>
+                <h4>Alpha通道生成</h4>
+                <p>根据颜色距离生成Alpha透明度：</p>
                 <div class="formula">
-                    ctx.translate(x + width/2, y + height/2)<br>
-                    ctx.rotate(angle × π/180)<br>
-                    ctx.translate(-width/2, -height/2)
+                    $$\alpha(x,y) = \begin{cases}
+                    0 & \text{if } d(x,y) < \text{threshold} \\
+                    1 & \text{if } d(x,y) \geq \text{threshold}
+                    \end{cases}$$
                 </div>
-                <p>其中angle为旋转角度（度），π为圆周率。</p>
+                <p>其中threshold为容差阈值，用于处理颜色的细微差异。</p>
+            </div>
+
+            <h3>6.3 正片叠底混合模式</h3>
+            <p>正片叠底（Multiply）是一种重要的图像混合模式，广泛用于水印和图像合成。</p>
+
+            <div class="algorithm-box">
+                <h4>正片叠底的数学定义</h4>
+                <p>正片叠底混合的数学公式为：</p>
+                <div class="formula">
+                    $$C_{\text{result}} = \frac{C_{\text{base}} \times C_{\text{blend}}}{255}$$
+                </div>
+                <p>对于归一化的颜色值（[0,1]范围）：</p>
+                <div class="formula">
+                    $$C_{\text{result}} = C_{\text{base}} \times C_{\text{blend}}$$
+                </div>
+            </div>
+
+            <div class="algorithm-box">
+                <h4>正片叠底的矩阵表示</h4>
+                <p>对于RGB图像，正片叠底可以表示为逐元素乘法：</p>
+                <div class="formula">
+                    $$\begin{bmatrix} R' \\ G' \\ B' \end{bmatrix} = \begin{bmatrix} R_{\text{base}} \\ G_{\text{base}} \\ B_{\text{base}} \end{bmatrix} \odot \begin{bmatrix} R_{\text{blend}} \\ G_{\text{blend}} \\ B_{\text{blend}} \end{bmatrix}$$
+                </div>
+                <p>其中$\odot$表示Hadamard积（逐元素乘法）。</p>
+            </div>
+
+            <div class="algorithm-box">
+                <h4>正片叠底的特性</h4>
+                <ul>
+                    <li><strong>变暗效果：</strong>结果总是比原色更暗或相等</li>
+                    <li><strong>白色透明：</strong>与白色混合保持原色不变</li>
+                    <li><strong>黑色吸收：</strong>与黑色混合结果为黑色</li>
+                    <li><strong>交换律：</strong>$A \times B = B \times A$</li>
+                </ul>
+            </div>
+            <h3>6.4 综合水印处理流程</h3>
+            <p>完整的水印处理包括背景透明化、几何变换和混合模式的综合应用。</p>
+
+            <div class="algorithm-box">
+                <h4>水印预处理</h4>
+                <p><strong>步骤1：背景透明化</strong></p>
+                <div class="formula">
+                    $$\mathbf{W}_{\alpha}(x,y) = \begin{cases}
+                    \mathbf{W}(x,y) & \text{if } d(x,y) \geq \text{threshold} \\
+                    \text{transparent} & \text{if } d(x,y) < \text{threshold}
+                    \end{cases}$$
+                </div>
+
+                <p><strong>步骤2：几何变换</strong></p>
+                <div class="formula">
+                    $$\mathbf{W}'_{\alpha} = \mathbf{T} \cdot \mathbf{W}_{\alpha}$$
+                </div>
+                <p>其中$\mathbf{T}$为仿射变换矩阵。</p>
+            </div>
+
+            <div class="algorithm-box">
+                <h4>水印融合</h4>
+                <p>结合Alpha混合和正片叠底的混合公式：</p>
+                <div class="formula">
+                    $$\mathbf{I}'(x,y) = \begin{cases}
+                    \mathbf{I}(x,y) \odot \mathbf{W}'(x,y) & \text{正片叠底模式} \\
+                    (1-\alpha)\mathbf{I}(x,y) + \alpha\mathbf{W}'(x,y) & \text{Alpha混合模式}
+                    \end{cases}$$
+                </div>
+                <p>选择合适的混合模式可以获得不同的视觉效果。</p>
+            </div>
+
+            <div class="algorithm-box">
+                <h4>数学特性总结</h4>
+                <ul>
+                    <li><strong>保真性：</strong>透明区域不影响原图像</li>
+                    <li><strong>可控性：</strong>通过参数调节水印强度</li>
+                    <li><strong>可逆性：</strong>理论上可以提取水印信息</li>
+                    <li><strong>鲁棒性：</strong>对轻微的图像变化具有抗性</li>
+                </ul>
             </div>
         </div>
 
@@ -615,6 +853,70 @@
     </div>
 
     <script>
+        // 浮动目录控制
+        let floatingTocVisible = false;
+
+        function toggleFloatingToc() {
+            const floatingToc = document.getElementById('floatingToc');
+            const tocToggle = document.getElementById('tocToggle');
+
+            floatingTocVisible = !floatingTocVisible;
+
+            if (floatingTocVisible) {
+                floatingToc.classList.add('visible');
+                tocToggle.classList.add('active');
+                tocToggle.innerHTML = '×';
+            } else {
+                floatingToc.classList.remove('visible');
+                tocToggle.classList.remove('active');
+                tocToggle.innerHTML = '📚';
+            }
+        }
+
+        // 目录切换按钮事件
+        document.getElementById('tocToggle').addEventListener('click', toggleFloatingToc);
+
+        // 阅读进度更新
+        function updateReadingProgress() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+
+            document.querySelector('.reading-progress').style.width = progress + '%';
+        }
+
+        // 当前章节高亮
+        function updateActiveSection() {
+            const sections = document.querySelectorAll('.theory-section');
+            const tocLinks = document.querySelectorAll('.floating-toc a');
+
+            let currentSection = '';
+            const scrollTop = window.pageYOffset + 100; // 偏移量
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+
+                if (scrollTop >= sectionTop && scrollTop < sectionTop + sectionHeight) {
+                    currentSection = section.id;
+                }
+            });
+
+            // 更新目录链接状态
+            tocLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-section') === currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // 滚动事件监听
+        window.addEventListener('scroll', () => {
+            updateReadingProgress();
+            updateActiveSection();
+        });
+
         // 平滑滚动到锚点
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -625,8 +927,42 @@
                         behavior: 'smooth',
                         block: 'start'
                     });
+
+                    // 在移动设备上点击目录项后自动隐藏目录
+                    if (window.innerWidth <= 768 && floatingTocVisible) {
+                        setTimeout(() => {
+                            toggleFloatingToc();
+                        }, 500);
+                    }
                 }
             });
+        });
+
+        // 点击页面其他地方隐藏浮动目录
+        document.addEventListener('click', function(e) {
+            const floatingToc = document.getElementById('floatingToc');
+            const tocToggle = document.getElementById('tocToggle');
+
+            if (floatingTocVisible &&
+                !floatingToc.contains(e.target) &&
+                !tocToggle.contains(e.target)) {
+                toggleFloatingToc();
+            }
+        });
+
+        // 键盘快捷键支持
+        document.addEventListener('keydown', function(e) {
+            // 按 T 键切换目录
+            if (e.key === 't' || e.key === 'T') {
+                if (!e.ctrlKey && !e.altKey && !e.metaKey) {
+                    e.preventDefault();
+                    toggleFloatingToc();
+                }
+            }
+            // 按 ESC 键隐藏目录
+            if (e.key === 'Escape' && floatingTocVisible) {
+                toggleFloatingToc();
+            }
         });
 
         // 主题切换支持
@@ -634,6 +970,19 @@
         if (savedTheme) {
             document.documentElement.setAttribute('data-theme', savedTheme);
         }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateReadingProgress();
+            updateActiveSection();
+
+            // 在大屏幕上默认显示目录
+            if (window.innerWidth > 1200) {
+                setTimeout(() => {
+                    toggleFloatingToc();
+                }, 1000);
+            }
+        });
 
         // 显示加载状态
         function showLoadingStatus() {
@@ -655,13 +1004,38 @@
             }
         }
 
+        // 备用渲染方案：使用简单的文本替换
+        function fallbackMathRender() {
+            console.log('使用备用数学公式渲染方案');
+            const formulas = document.querySelectorAll('.formula');
+            formulas.forEach(formula => {
+                let content = formula.innerHTML;
+                // 简单的LaTeX符号替换
+                content = content.replace(/\$\$([^$]+)\$\$/g, '<em style="font-family: serif; font-style: italic;">$1</em>');
+                content = content.replace(/\$([^$]+)\$/g, '<em style="font-family: serif; font-style: italic;">$1</em>');
+                content = content.replace(/\\mathbf\{([^}]+)\}/g, '<strong>$1</strong>');
+                content = content.replace(/\\text\{([^}]+)\}/g, '$1');
+                content = content.replace(/\\times/g, '×');
+                content = content.replace(/\\cdot/g, '·');
+                content = content.replace(/\\alpha/g, 'α');
+                content = content.replace(/\\beta/g, 'β');
+                content = content.replace(/\\theta/g, 'θ');
+                content = content.replace(/\\Delta/g, 'Δ');
+                content = content.replace(/\\odot/g, '⊙');
+                formula.innerHTML = content;
+            });
+        }
+
         // 初始化KaTeX渲染
         document.addEventListener("DOMContentLoaded", function() {
             showLoadingStatus();
 
+            let katexLoaded = false;
+
             // 检查KaTeX是否加载成功
             function checkKaTeX() {
-                if (typeof renderMathInElement !== 'undefined') {
+                if (typeof renderMathInElement !== 'undefined' && !katexLoaded) {
+                    katexLoaded = true;
                     try {
                         renderMathInElement(document.body, {
                             delimiters: [
@@ -679,24 +1053,26 @@
                             }
                         });
                         hideLoadingStatus();
-                        console.log('数学公式渲染完成');
+                        console.log('KaTeX数学公式渲染完成');
                     } catch (error) {
                         console.error('KaTeX渲染错误:', error);
+                        fallbackMathRender();
                         hideLoadingStatus();
                     }
-                } else {
+                } else if (!katexLoaded) {
                     // 如果KaTeX还没加载，等待一段时间后重试
                     setTimeout(checkKaTeX, 100);
                 }
             }
 
-            // 设置超时，如果10秒后还没加载成功就隐藏加载提示
+            // 设置超时，如果5秒后还没加载成功就使用备用方案
             setTimeout(() => {
-                if (document.getElementById('math-loading')) {
+                if (!katexLoaded) {
+                    console.warn('KaTeX加载超时，使用备用渲染方案');
+                    fallbackMathRender();
                     hideLoadingStatus();
-                    console.warn('KaTeX加载超时，可能网络连接有问题');
                 }
-            }, 10000);
+            }, 5000);
 
             checkKaTeX();
         });
