@@ -6,7 +6,7 @@ window.ImageEncryption = {
     canvas: null,
     ctx: null,
 
-    // 行列加密相关
+    // 行列置换相关
     rowOrder: null,
     colOrder: null,
 
@@ -60,29 +60,29 @@ window.ImageEncryption = {
 
                     <div class="encryption-methods">
                         <div class="method-tabs">
-                            <button class="tab-btn active" data-method="rowcol">行列加密</button>
+                            <button class="tab-btn active" data-method="rowcol">行列置换</button>
                             <button class="tab-btn" data-method="arnold">Arnold变换</button>
                         </div>
 
-                        <!-- 行列加密 -->
+                        <!-- 行列置换 -->
                         <div class="method-content active" id="rowcol-method">
                             <div class="method-description">
-                                <h4>行列加密算法</h4>
-                                <p>通过随机打乱图像的行和列顺序实现加密，支持分步骤演示</p>
+                                <h4>行列置换算法</h4>
+                                <p>通过随机打乱图像的行和列顺序实现置换，支持分步骤演示</p>
                             </div>
 
                             <div class="rowcol-controls">
                                 <div class="control-group">
-                                    <label>加密类型:</label>
+                                    <label>置换类型:</label>
                                     <select id="rowcol-type">
-                                        <option value="row">仅行加密</option>
-                                        <option value="col">仅列加密</option>
-                                        <option value="both">行列加密</option>
+                                        <option value="row">仅行置换</option>
+                                        <option value="col">仅列置换</option>
+                                        <option value="both">行列置换</option>
                                     </select>
                                 </div>
                                 <div class="control-group">
-                                    <button class="encrypt-btn" data-action="rowcol-encrypt">开始加密</button>
-                                    <button class="encrypt-btn" data-action="rowcol-decrypt">解密</button>
+                                    <button class="encrypt-btn" data-action="rowcol-encrypt">开始置换</button>
+                                    <button class="encrypt-btn" data-action="rowcol-decrypt">逆置换</button>
                                     <button class="encrypt-btn secondary" data-action="rowcol-demo">演示过程</button>
                                 </div>
                             </div>
@@ -122,7 +122,14 @@ window.ImageEncryption = {
                     <div class="image-display">
                         <div class="image-container">
                             <h4>原始图像</h4>
-                            <img id="original-image" class="preview-image" alt="原始图像">
+                            <div class="image-upload-area" id="original-image-area">
+                                <img id="original-image" class="preview-image" alt="原始图像" style="display: none;">
+                                <div class="upload-placeholder" id="upload-placeholder">
+                                    <div class="upload-icon">📁</div>
+                                    <p>点击上传图像</p>
+                                    <input type="file" id="direct-image-input" accept="image/*" style="display: none;">
+                                </div>
+                            </div>
                         </div>
                         <div class="image-swap-container">
                             <button class="swap-btn" id="swap-images" title="将右图设为左图">
@@ -133,14 +140,14 @@ window.ImageEncryption = {
                             </button>
                         </div>
                         <div class="image-container">
-                            <h4>加密结果</h4>
+                            <h4>置换结果</h4>
                             <canvas id="result-canvas" class="preview-image"></canvas>
                         </div>
                     </div>
 
                     <!-- 演示区域 -->
                     <div class="demo-section d-none" id="demo-section">
-                        <h4>加密过程演示</h4>
+                        <h4>置换过程演示</h4>
                         <div class="demo-steps" id="demo-steps">
                             <!-- 动态生成演示步骤 -->
                         </div>
@@ -387,12 +394,53 @@ window.ImageEncryption = {
                     margin-bottom: 1rem;
                     color: var(--text-color);
                 }
-                
+
                 .preview-image {
                     max-width: 100%;
                     max-height: 300px;
                     border-radius: 8px;
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                }
+
+                .image-upload-area {
+                    position: relative;
+                    min-height: 200px;
+                    border: 2px dashed var(--border-color);
+                    border-radius: 8px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                }
+
+                .image-upload-area:hover {
+                    border-color: var(--primary-color);
+                    background: rgba(102, 126, 234, 0.05);
+                }
+
+                .image-upload-area.has-image {
+                    border: none;
+                    cursor: default;
+                }
+
+                .image-upload-area.has-image:hover {
+                    background: transparent;
+                }
+
+                .upload-placeholder {
+                    text-align: center;
+                    color: var(--text-muted);
+                }
+
+                .upload-placeholder .upload-icon {
+                    font-size: 2rem;
+                    margin-bottom: 0.5rem;
+                }
+
+                .upload-placeholder p {
+                    margin: 0;
+                    font-size: 0.9rem;
                 }
                 
                 .demo-section {
@@ -515,6 +563,25 @@ window.ImageEncryption = {
         const imageInput = document.getElementById('image-input');
         imageInput.addEventListener('change', (e) => this.handleImageUpload(e));
 
+        // 直接上传功能
+        const directImageInput = document.getElementById('direct-image-input');
+        const uploadPlaceholder = document.getElementById('upload-placeholder');
+        const originalImageArea = document.getElementById('original-image-area');
+
+        if (directImageInput && uploadPlaceholder && originalImageArea) {
+            directImageInput.addEventListener('change', (e) => this.handleImageUpload(e));
+
+            uploadPlaceholder.addEventListener('click', () => {
+                directImageInput.click();
+            });
+
+            originalImageArea.addEventListener('click', (e) => {
+                if (!this.currentImage && e.target.closest('.upload-placeholder')) {
+                    directImageInput.click();
+                }
+            });
+        }
+
         // 方法切换
         const tabBtns = document.querySelectorAll('.tab-btn');
         tabBtns.forEach(btn => {
@@ -603,16 +670,87 @@ window.ImageEncryption = {
     showProcessingSection: function() {
         document.querySelector('.upload-section').classList.add('d-none');
         document.getElementById('processing-section').classList.remove('d-none');
+
+        // 更新原始图像显示
+        this.updateOriginalImageDisplay();
+
+        // 显示滑块重置功能提示
+        if (window.ImageLabUtils && window.ImageLabUtils.showSliderResetTip) {
+            // 延迟1秒显示，让用户先看到界面
+            setTimeout(() => {
+                window.ImageLabUtils.showSliderResetTip();
+            }, 1000);
+        }
+    },
+
+    updateOriginalImageDisplay: function() {
+        const originalImage = document.getElementById('original-image');
+        const uploadPlaceholder = document.getElementById('upload-placeholder');
+        const originalImageArea = document.getElementById('original-image-area');
+
+        if (this.currentImage && originalImage) {
+            originalImage.src = this.currentImage.src;
+            originalImage.style.display = 'block';
+            if (uploadPlaceholder) uploadPlaceholder.style.display = 'none';
+            if (originalImageArea) originalImageArea.classList.add('has-image');
+        } else {
+            if (originalImage) originalImage.style.display = 'none';
+            if (uploadPlaceholder) uploadPlaceholder.style.display = 'block';
+            if (originalImageArea) originalImageArea.classList.remove('has-image');
+        }
     },
     
     switchMethod: function(method) {
         // 更新标签按钮状态
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelector(`[data-method="${method}"]`).classList.add('active');
-        
+
         // 更新方法内容
         document.querySelectorAll('.method-content').forEach(content => content.classList.remove('active'));
         document.getElementById(`${method}-method`).classList.add('active');
+
+        // 清空当前图片，允许重新上传
+        this.clearCurrentImages();
+
+        // 显示上传区域，隐藏处理区域
+        document.querySelector('.upload-section').classList.remove('d-none');
+        document.getElementById('processing-section').classList.add('d-none');
+
+        if (window.ImageLabUtils) {
+            window.ImageLabUtils.showNotification(`已切换到${method === 'rowcol' ? '行列置换' : 'Arnold变换'}模式`, 'info');
+        }
+    },
+
+    clearCurrentImages: function() {
+        // 清理当前图像和相关数据
+        this.currentImage = null;
+        this.originalImageData = null;
+        this.canvas = null;
+        this.ctx = null;
+        this.lastRowOrder = null;
+        this.lastColOrder = null;
+
+        // 更新原始图像显示
+        this.updateOriginalImageDisplay();
+
+        // 清空结果画布
+        const resultCanvas = document.getElementById('result-canvas');
+        if (resultCanvas) {
+            const ctx = resultCanvas.getContext('2d');
+            ctx.clearRect(0, 0, resultCanvas.width, resultCanvas.height);
+        }
+
+        // 重置文件输入框
+        const imageInput = document.getElementById('image-input');
+        const directImageInput = document.getElementById('direct-image-input');
+
+        if (imageInput) {
+            imageInput.value = '';
+        }
+
+        if (directImageInput) {
+            directImageInput.value = '';
+        }
     },
     
     handleEncryption: function(action) {
@@ -638,7 +776,7 @@ window.ImageEncryption = {
         }
     },
 
-    // 行列加密功能
+    // 行列置换功能
     rowColEncrypt: function() {
         if (!this.originalImageData) return;
 
@@ -667,7 +805,7 @@ window.ImageEncryption = {
         this.ctx.putImageData(result, 0, 0);
 
         if (window.ImageLabUtils) {
-            window.ImageLabUtils.showNotification('行列加密完成', 'success');
+            window.ImageLabUtils.showNotification('行列置换完成', 'success');
         }
     },
 
@@ -693,7 +831,7 @@ window.ImageEncryption = {
 
         let currentImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
 
-        // 解密顺序与加密相反
+        // 逆置换顺序与置换相反
         if (type === 'col' || type === 'both') {
             currentImageData = this.unscrambleColumns(currentImageData);
         }
@@ -705,11 +843,11 @@ window.ImageEncryption = {
         this.ctx.putImageData(currentImageData, 0, 0);
 
         if (window.ImageLabUtils) {
-            window.ImageLabUtils.showNotification('行列解密完成', 'success');
+            window.ImageLabUtils.showNotification('行列逆置换完成', 'success');
         }
     },
     
-    // 行加密 - 基于MATLAB代码实现
+    // 行置换 - 基于MATLAB代码实现
     scrambleRows: function(imageData) {
         const width = imageData.width;
         const height = imageData.height;
@@ -739,7 +877,7 @@ window.ImageEncryption = {
         return newImageData;
     },
 
-    // 列加密
+    // 列置换
     scrambleColumns: function(imageData) {
         const width = imageData.width;
         const height = imageData.height;
@@ -769,7 +907,7 @@ window.ImageEncryption = {
         return newImageData;
     },
 
-    // 行解密
+    // 行逆置换
     unscrambleRows: function(imageData) {
         if (!this.rowOrder) return imageData;
 
@@ -804,7 +942,7 @@ window.ImageEncryption = {
         return newImageData;
     },
 
-    // 列解密
+    // 列逆置换
     unscrambleColumns: function(imageData) {
         if (!this.colOrder) return imageData;
 
@@ -944,7 +1082,7 @@ window.ImageEncryption = {
     scrambleDecrypt: function() {
         if (!this.lastRowOrder && !this.lastColOrder) {
             if (window.ImageLabUtils) {
-                window.ImageLabUtils.showNotification('请先执行加密操作以生成解密序列', 'warning');
+                window.ImageLabUtils.showNotification('请先执行置换操作以生成逆置换序列', 'warning');
             }
             return;
         }
@@ -992,7 +1130,7 @@ window.ImageEncryption = {
         this.ctx.putImageData(resultImageData, 0, 0);
 
         if (window.ImageLabUtils) {
-            window.ImageLabUtils.showNotification('像素置乱解密完成', 'success');
+            window.ImageLabUtils.showNotification('像素置乱逆置换完成', 'success');
         }
     },
 
@@ -1294,13 +1432,13 @@ window.ImageEncryption = {
 
         if (type === 'row' || type === 'both') {
             currentImageData = this.scrambleRows(currentImageData);
-            this.addDemoStep(demoSteps, currentImageData, 1, '行加密');
+            this.addDemoStep(demoSteps, currentImageData, 1, '行置换');
         }
 
         if (type === 'col' || type === 'both') {
             currentImageData = this.scrambleColumns(currentImageData);
             const stepNum = type === 'both' ? 2 : 1;
-            this.addDemoStep(demoSteps, currentImageData, stepNum, '列加密');
+            this.addDemoStep(demoSteps, currentImageData, stepNum, '列置换');
         }
     },
 

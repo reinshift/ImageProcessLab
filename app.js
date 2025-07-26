@@ -124,7 +124,12 @@ function setupModuleSelector() {
     function loadModuleContent(moduleType) {
         // 清空工作区内容
         workspaceContent.innerHTML = '';
-        
+
+        // 重置滑块提示状态
+        if (window.ImageLabUtils && window.ImageLabUtils.resetSliderTipState) {
+            window.ImageLabUtils.resetSliderTipState();
+        }
+
         // 根据模块类型加载对应内容
         switch(moduleType) {
             case 'transform':

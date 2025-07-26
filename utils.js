@@ -248,6 +248,108 @@ window.ImageLabUtils = {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     },
     
+    // 显示滑块重置功能提示
+    showSliderResetTip: function() {
+        // 检查是否已经显示过提示（避免在同一会话中重复显示）
+        if (window.sliderTipShown) {
+            return;
+        }
+
+        // 创建提示容器
+        const tipContainer = document.createElement('div');
+        tipContainer.id = 'slider-reset-tip';
+        tipContainer.style.cssText = `
+            position: fixed;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 9999;
+            max-width: 280px;
+            font-size: 14px;
+            line-height: 1.5;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInRight 0.5s ease-out;
+        `;
+
+        tipContainer.innerHTML = `
+            <div style="display: flex; align-items: flex-start; gap: 12px;">
+                <div style="font-size: 20px; margin-top: 2px;">💡</div>
+                <div>
+                    <div style="font-weight: 600; margin-bottom: 6px;">小贴士</div>
+                    <div style="opacity: 0.9;">双击任意滑块或参数标签可快速重置到默认值</div>
+                </div>
+                <button style="
+                    background: none;
+                    border: none;
+                    color: white;
+                    font-size: 18px;
+                    cursor: pointer;
+                    opacity: 0.7;
+                    padding: 0;
+                    margin-left: auto;
+                    line-height: 1;
+                " onclick="this.parentElement.parentElement.remove();">×</button>
+            </div>
+        `;
+
+        // 添加动画样式
+        if (!document.getElementById('slider-tip-styles')) {
+            const style = document.createElement('style');
+            style.id = 'slider-tip-styles';
+            style.textContent = `
+                @keyframes slideInRight {
+                    from {
+                        transform: translateY(-50%) translateX(100%);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateY(-50%) translateX(0);
+                        opacity: 1;
+                    }
+                }
+                @keyframes slideOutRight {
+                    from {
+                        transform: translateY(-50%) translateX(0);
+                        opacity: 1;
+                    }
+                    to {
+                        transform: translateY(-50%) translateX(100%);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        document.body.appendChild(tipContainer);
+
+        // 15秒后自动消失
+        setTimeout(() => {
+            if (tipContainer.parentElement) {
+                tipContainer.style.animation = 'slideOutRight 0.5s ease-in';
+                setTimeout(() => {
+                    if (tipContainer.parentElement) {
+                        tipContainer.remove();
+                    }
+                }, 500);
+            }
+        }, 15000);
+
+        // 标记已显示过提示（会话级别）
+        window.sliderTipShown = true;
+    },
+
+    // 重置滑块提示状态（用于模块切换时）
+    resetSliderTipState: function() {
+        window.sliderTipShown = false;
+    },
+
     // 防抖函数
     debounce: function(func, wait) {
         let timeout;

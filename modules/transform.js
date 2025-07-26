@@ -511,6 +511,14 @@ window.ImageTransform = {
     showProcessingSection: function() {
         document.querySelector('.upload-section').classList.add('d-none');
         document.getElementById('processing-section').classList.remove('d-none');
+
+        // 显示滑块重置功能提示
+        if (window.ImageLabUtils && window.ImageLabUtils.showSliderResetTip) {
+            // 延迟1秒显示，让用户先看到界面
+            setTimeout(() => {
+                window.ImageLabUtils.showSliderResetTip();
+            }, 1000);
+        }
     },
     
     switchTab: function(tabName) {
