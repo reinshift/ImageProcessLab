@@ -83,6 +83,49 @@ body {
     background: var(--primary-hover);
 }
 
+/* 通用浮动面板切换按钮样式 */
+.panel-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+}
+
+.panel-toggle-btn:hover {
+    background: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.panel-toggle-btn .toggle-icon {
+    font-size: 16px;
+}
+
+.panel-toggle-btn .toggle-text {
+    white-space: nowrap;
+}
+
+/* 深色主题下的面板切换按钮 */
+[data-theme="dark"] .panel-toggle-btn {
+    background: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+[data-theme="dark"] .panel-toggle-btn:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
 /* 加载动画 */
 #loading-overlay {
     position: fixed;

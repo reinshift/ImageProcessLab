@@ -43,7 +43,7 @@ window.ImageWatermark = {
             this.fontColor = '#ffffff';
         }
     },
-    
+
     init: function(container) {
         console.log('水印模块初始化开始，容器:', container);
         this.container = container;
@@ -51,7 +51,7 @@ window.ImageWatermark = {
         this.setupEventListeners();
         console.log('水印模块初始化完成');
     },
-    
+
     render: function() {
         this.container.innerHTML = `
             <div class="watermark-workspace">
@@ -73,7 +73,7 @@ window.ImageWatermark = {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- 水印图上传 -->
                         <div class="upload-area" id="watermark-upload-area">
                             <div class="upload-content">
@@ -106,7 +106,7 @@ window.ImageWatermark = {
                         </p>
                     </div>
                 </div>
-                
+
                 <!-- 水印融合控件 -->
                 <div class="processing-section d-none" id="processing-section">
                     <!-- 水印编辑区域 -->
@@ -114,7 +114,7 @@ window.ImageWatermark = {
                         <!-- 左侧工具栏 -->
                         <div class="editor-sidebar">
                             <h4>水印工具</h4>
-                            
+
                             <!-- 水印素材预览 -->
                             <div class="watermark-source-area">
                                 <div class="watermark-preview-card" id="watermark-preview-card">
@@ -155,6 +155,19 @@ window.ImageWatermark = {
                                 </div>
                             </div>
 
+                            <!-- 全局透明度调整 -->
+                            <div class="global-opacity-control">
+                                <h5>全局透明度</h5>
+                                <div class="opacity-control-group">
+                                    <label>水印透明度:</label>
+                                    <div class="control-input">
+                                        <input type="range" id="global-opacity" min="0" max="100" value="50">
+                                        <span id="global-opacity-value">50%</span>
+                                    </div>
+                                    <p class="opacity-hint">调整所有已放置水印的透明度</p>
+                                </div>
+                            </div>
+
                             <!-- 清空操作 -->
                             <div class="clear-operations">
                                 <button class="clear-btn" id="clear-all-btn">
@@ -181,83 +194,47 @@ window.ImageWatermark = {
                                     </div>
                                 </div>
                             </div>
+
+                            <!-- 右侧下方工具面板 -->
+                            <div class="editor-bottom-tools">
+                                <!-- 文字水印编辑 -->
+                                <div class="text-watermark-editor-bottom" id="text-watermark-editor-bottom" style="display: none;">
+                                    <h5>📝 文字水印设置</h5>
+                                    <div class="text-controls-horizontal">
+                                        <div class="text-control-item">
+                                            <label>水印文字:</label>
+                                            <input type="text" id="watermark-text-bottom" placeholder="输入水印文字" value="WATERMARK" maxlength="50">
+                                        </div>
+                                        <div class="text-control-item">
+                                            <label>字体大小:</label>
+                                            <div class="control-input-compact">
+                                                <input type="range" id="font-size-bottom" min="12" max="120" value="36">
+                                                <span id="font-size-value-bottom">36px</span>
+                                            </div>
+                                        </div>
+                                        <div class="text-control-item">
+                                            <label>字体颜色:</label>
+                                            <input type="color" id="font-color-bottom" value="#ffffff">
+                                        </div>
+                                        <div class="text-control-item">
+                                            <label>字体:</label>
+                                            <select id="font-family-bottom">
+                                                <option value="Arial">Arial</option>
+                                                <option value="Microsoft YaHei">微软雅黑</option>
+                                                <option value="SimHei">黑体</option>
+                                                <option value="SimSun">宋体</option>
+                                                <option value="Times New Roman">Times New Roman</option>
+                                                <option value="Georgia">Georgia</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- 水印属性控制面板 -->
-                    <div class="watermark-controls">
-                        <div class="control-header">
-                            <h4>水印属性调整</h4>
-                            <div class="selected-watermark-info" id="selected-watermark-info">
-                                <span class="no-selection">请选择一个水印进行编辑</span>
-                            </div>
-                        </div>
 
-                        <div class="control-tabs">
-                            <button class="tab-btn active" data-tab="basic">基础属性</button>
-                            <button class="tab-btn" data-tab="text" id="text-tab-btn" style="display: none;">文字设置</button>
-                            <button class="tab-btn" data-tab="advanced">高级选项</button>
-                        </div>
 
-                        <!-- 基础属性 -->
-                        <div class="tab-content active" id="basic-tab">
-                            <div class="control-group">
-                                <label>透明度:</label>
-                                <div class="control-input">
-                                    <input type="range" id="opacity" min="10" max="100" value="50">
-                                    <span id="opacity-value">50%</span>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label>缩放大小:</label>
-                                <div class="control-input">
-                                    <input type="range" id="scale" min="10" max="300" value="100">
-                                    <span id="scale-value">100%</span>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label>旋转角度:</label>
-                                <div class="control-input">
-                                    <input type="range" id="rotation" min="0" max="360" value="0">
-                                    <span id="rotation-value">0°</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- 文字水印设置 -->
-                        <div class="tab-content" id="text-tab">
-                            <div class="control-group">
-                                <label>水印文字:</label>
-                                <input type="text" id="watermark-text" placeholder="输入水印文字" value="WATERMARK">
-                            </div>
-                            <div class="control-group">
-                                <label>字体大小:</label>
-                                <div class="control-input">
-                                    <input type="range" id="font-size" min="12" max="120" value="36">
-                                    <span id="font-size-value">36px</span>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label>字体颜色:</label>
-                                <input type="color" id="font-color" value="#ffffff">
-                            </div>
-                        </div>
-
-                        <!-- 高级选项 -->
-                        <div class="tab-content" id="advanced-tab">
-                            <div class="control-group">
-                                <label>混合模式:</label>
-                                <select id="blend-mode">
-                                    <option value="normal">正常</option>
-                                    <option value="multiply">正片叠底</option>
-                                    <option value="screen">滤色</option>
-                                    <option value="overlay">叠加</option>
-                                    <option value="soft-light">柔光</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
                     <!-- 操作按钮 -->
                     <div class="action-buttons">
                         <button class="action-btn secondary" id="download-btn">
@@ -269,13 +246,18 @@ window.ImageWatermark = {
                     </div>
                 </div>
             </div>
-            
+
             <style>
                 .watermark-workspace {
-                    max-width: 1400px;
+                    max-width: 1600px;
                     margin: 0 auto;
                     padding: 1.5rem;
                     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    min-height: 100vh;
+                    box-sizing: border-box;
+                    overflow: hidden;
+                    display: flex;
+                    flex-direction: column;
                 }
 
                 /* 上传区域样式 */
@@ -432,7 +414,7 @@ window.ImageWatermark = {
                     transform: translateY(-3px);
                     box-shadow: 0 10px 35px rgba(var(--primary-color-rgb), 0.5);
                 }
-                
+
                 .d-none { display: none !important; }
 
                 /* 编辑器区域样式 */
@@ -441,6 +423,8 @@ window.ImageWatermark = {
                     grid-template-columns: 320px 1fr;
                     gap: 2.5rem;
                     margin-bottom: 2.5rem;
+                    align-items: start;
+                    min-height: fit-content;
                 }
 
                 .editor-sidebar {
@@ -542,8 +526,39 @@ window.ImageWatermark = {
                     font-style: italic;
                 }
 
-                .quick-placement, .clear-operations {
+                .quick-placement, .global-opacity-control, .clear-operations {
                     margin-bottom: 2rem;
+                }
+
+                /* 全局透明度控件样式 */
+                .global-opacity-control h5 {
+                    margin: 0 0 1rem 0;
+                    color: var(--text-primary);
+                    font-weight: 700;
+                    font-size: 1rem;
+                }
+
+                .opacity-control-group {
+                    background: var(--background-light);
+                    border-radius: 12px;
+                    padding: 1.5rem;
+                    border: 1px solid var(--border-color);
+                }
+
+                .opacity-control-group label {
+                    display: block;
+                    margin-bottom: 0.5rem;
+                    font-weight: 600;
+                    color: var(--text-primary);
+                    font-size: 0.9rem;
+                }
+
+                .opacity-hint {
+                    margin: 0.5rem 0 0 0;
+                    font-size: 0.8rem;
+                    color: var(--text-muted);
+                    font-style: italic;
+                    text-align: center;
                 }
 
                 .quick-buttons {
@@ -601,7 +616,136 @@ window.ImageWatermark = {
                     padding: 2rem;
                     border: 1px solid var(--border-color);
                     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+                    overflow: hidden;
+                    min-height: fit-content;
                 }
+
+                /* 底部工具面板样式 */
+                .editor-bottom-tools {
+                    margin-top: 2rem;
+                    padding-top: 2rem;
+                    border-top: 2px solid var(--border-color);
+                }
+
+                .editor-bottom-tools h5 {
+                    margin: 0 0 1rem 0;
+                    color: var(--text-primary);
+                    font-weight: 700;
+                    font-size: 1rem;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                }
+
+                /* 底部文字水印编辑器 */
+                .text-watermark-editor-bottom {
+                    margin-bottom: 2rem;
+                    padding: 1.5rem;
+                    background: var(--background-light);
+                    border-radius: 12px;
+                    border: 1px solid var(--border-color);
+                }
+
+                .text-controls-horizontal {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    grid-template-rows: auto auto;
+                    gap: 1rem;
+                    align-items: end;
+                }
+
+                .text-control-item {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.5rem;
+                }
+
+                .text-control-item label {
+                    font-weight: 600;
+                    color: var(--text-primary);
+                    font-size: 0.9rem;
+                }
+
+                .text-control-item input[type="text"] {
+                    padding: 0.75rem;
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    font-size: 0.9rem;
+                    background: white;
+                    transition: border-color 0.3s ease;
+                }
+
+                .text-control-item input[type="text"]:focus {
+                    outline: none;
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                }
+
+                .control-input-compact {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                    background: white;
+                    padding: 0.5rem;
+                    border-radius: 8px;
+                    border: 1px solid var(--border-color);
+                }
+
+                .control-input-compact input[type="range"] {
+                    flex: 1;
+                    height: 4px;
+                    border-radius: 2px;
+                    background: var(--border-color);
+                    outline: none;
+                    -webkit-appearance: none;
+                }
+
+                .control-input-compact input[type="range"]::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    width: 16px;
+                    height: 16px;
+                    border-radius: 50%;
+                    background: var(--primary-color);
+                    cursor: pointer;
+                    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
+                }
+
+                .control-input-compact span {
+                    min-width: 45px;
+                    font-size: 0.85rem;
+                    color: var(--text-primary);
+                    text-align: right;
+                    font-weight: 600;
+                    background: var(--background-light);
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 4px;
+                }
+
+                .text-control-item input[type="color"] {
+                    width: 60px;
+                    height: 40px;
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    cursor: pointer;
+                    background: white;
+                    padding: 2px;
+                }
+
+                .text-control-item select {
+                    padding: 0.75rem;
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    font-size: 0.9rem;
+                    background: white;
+                    cursor: pointer;
+                    width: 100%;
+                    max-width: 100%;
+                    box-sizing: border-box;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+
 
                 .canvas-container h4 {
                     margin: 0 0 1.5rem 0;
@@ -619,12 +763,14 @@ window.ImageWatermark = {
 
                 .canvas-wrapper {
                     position: relative;
-                    display: inline-block;
+                    display: block;
                     border: 3px solid var(--border-color);
                     border-radius: 16px;
                     overflow: hidden;
                     background: linear-gradient(145deg, #f5f5f5, #ffffff);
                     max-width: 100%;
+                    width: fit-content;
+                    margin: 0 auto;
                     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
                     transition: all 0.3s ease;
                 }
@@ -668,142 +814,134 @@ window.ImageWatermark = {
                     margin-bottom: 0;
                 }
 
-                /* 控制面板样式 */
-                .watermark-controls {
-                    background: linear-gradient(145deg, #ffffff, #f8f9fa);
-                    border-radius: 20px;
-                    padding: 2rem;
-                    border: 1px solid var(--border-color);
-                    margin-bottom: 2.5rem;
-                    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-                }
 
-                .control-header {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    margin-bottom: 2rem;
-                    padding-bottom: 1rem;
-                    border-bottom: 2px solid var(--border-color);
-                }
 
-                .control-header h4 {
-                    margin: 0;
-                    color: var(--text-primary);
-                    font-weight: 700;
-                    font-size: 1.3rem;
-                }
 
-                .selected-watermark-info {
-                    font-size: 0.9rem;
-                    color: var(--text-muted);
-                    font-weight: 600;
-                    padding: 0.5rem 1rem;
-                    background: var(--bg-secondary);
-                    border-radius: 8px;
-                }
 
-                .control-tabs {
-                    display: flex;
-                    gap: 0.5rem;
-                    margin-bottom: 2rem;
-                    background: var(--bg-secondary);
-                    padding: 0.5rem;
+                /* 文字水印编辑器样式 */
+                .text-watermark-editor {
+                    background: var(--background-light);
                     border-radius: 12px;
+                    padding: 1.5rem;
+                    margin-bottom: 1.5rem;
+                    border: 1px solid var(--border-color);
                 }
 
-                .tab-btn {
-                    background: none;
-                    border: none;
-                    padding: 1rem 1.5rem;
-                    cursor: pointer;
-                    font-size: 0.95rem;
-                    font-weight: 600;
-                    color: var(--text-muted);
-                    border-radius: 8px;
-                    transition: all 0.3s ease;
-                    flex: 1;
-                    text-align: center;
-                }
-
-                .tab-btn.active {
-                    color: white;
-                    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
-                    box-shadow: 0 4px 15px rgba(var(--primary-color-rgb), 0.3);
-                }
-
-                .tab-btn:hover:not(.active) {
+                .text-watermark-editor h5 {
+                    margin: 0 0 1rem 0;
                     color: var(--text-primary);
-                    background: rgba(var(--primary-color-rgb), 0.1);
-                }
-
-                .tab-content {
-                    display: none;
-                }
-
-                .tab-content.active {
-                    display: block;
-                }
-
-                .control-group {
-                    margin-bottom: 2rem;
-                }
-
-                .control-group label {
-                    display: block;
-                    margin-bottom: 0.8rem;
                     font-weight: 700;
-                    color: var(--text-primary);
                     font-size: 1rem;
                 }
 
-                .control-input {
+                .text-control-group {
+                    margin-bottom: 1rem;
+                }
+
+                .text-control-group label {
+                    display: block;
+                    margin-bottom: 0.5rem;
+                    font-weight: 600;
+                    color: var(--text-primary);
+                    font-size: 0.9rem;
+                }
+
+                .text-control-group input[type="text"] {
+                    width: 100%;
+                    padding: 0.75rem;
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    font-size: 0.9rem;
+                    background: white;
+                    transition: border-color 0.3s ease;
+                }
+
+                .text-control-group input[type="text"]:focus {
+                    outline: none;
+                    border-color: var(--primary-color);
+                    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+                }
+
+                .text-control-group .control-input {
                     display: flex;
                     align-items: center;
-                    gap: 1.5rem;
-                    background: var(--bg-secondary);
-                    padding: 1rem;
-                    border-radius: 12px;
-                    border: 2px solid transparent;
-                    transition: all 0.3s ease;
+                    gap: 0.75rem;
+                    background: white;
+                    padding: 0.5rem;
+                    border-radius: 8px;
+                    border: 1px solid var(--border-color);
                 }
 
-                .control-input:focus-within {
-                    border-color: var(--primary-color);
-                    box-shadow: 0 0 0 3px rgba(var(--primary-color-rgb), 0.1);
-                }
-
-                .control-input input[type="range"] {
+                .text-control-group input[type="range"] {
                     flex: 1;
-                    height: 6px;
-                    border-radius: 3px;
+                    height: 4px;
+                    border-radius: 2px;
                     background: var(--border-color);
                     outline: none;
                     -webkit-appearance: none;
                 }
 
-                .control-input input[type="range"]::-webkit-slider-thumb {
+                .text-control-group input[type="range"]::-webkit-slider-thumb {
                     -webkit-appearance: none;
-                    width: 20px;
-                    height: 20px;
+                    width: 16px;
+                    height: 16px;
                     border-radius: 50%;
-                    background: linear-gradient(135deg, var(--primary-color), var(--primary-color-dark));
+                    background: var(--primary-color);
                     cursor: pointer;
-                    box-shadow: 0 2px 8px rgba(var(--primary-color-rgb), 0.3);
+                    box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
                 }
 
-                .control-input span {
-                    min-width: 60px;
-                    font-size: 0.9rem;
+                .text-control-group span {
+                    min-width: 50px;
+                    font-size: 0.85rem;
                     color: var(--text-primary);
                     text-align: right;
-                    font-weight: 700;
-                    background: white;
-                    padding: 0.3rem 0.8rem;
-                    border-radius: 6px;
-                    border: 1px solid var(--border-color);
+                    font-weight: 600;
+                    background: var(--background-light);
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 4px;
                 }
 
+                .text-control-group input[type="color"] {
+                    width: 100%;
+                    height: 40px;
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    cursor: pointer;
+                    background: white;
+                }
+
+                .text-control-group select {
+                    width: 100%;
+                    padding: 0.75rem;
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    font-size: 0.9rem;
+                    background: white;
+                    cursor: pointer;
+                }
+
+                .update-text-btn {
+                    width: 100%;
+                    padding: 0.75rem;
+                    background: var(--primary-color);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-size: 0.9rem;
+                    font-weight: 600;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.5rem;
+                    transition: all 0.3s ease;
+                }
+
+                .update-text-btn:hover {
+                    background: var(--primary-hover);
+                    transform: translateY(-1px);
+                }
                 /* 操作按钮样式 */
                 .action-buttons {
                     display: flex;
@@ -863,11 +1001,24 @@ window.ImageWatermark = {
                     }
 
                     .editor-sidebar {
-                        order: 2;
+                        order: 1;
                     }
 
                     .editor-main {
-                        order: 1;
+                        order: 2;
+                    }
+
+                    .text-controls-horizontal {
+                        grid-template-columns: 1fr 1fr;
+                        gap: 1rem;
+                    }
+                }
+
+                @media (max-width: 768px) {
+                    .text-controls-horizontal {
+                        grid-template-columns: 1fr;
+                        grid-template-rows: auto auto auto auto;
+                        gap: 1rem;
                     }
                 }
 
@@ -1045,6 +1196,12 @@ window.ImageWatermark = {
             useTextWatermarkBtn.addEventListener('click', () => this.enableTextWatermarkMode());
         }
 
+        // 文字编辑控件事件
+        this.setupTextEditingEvents();
+
+        // 全局透明度控件事件
+        this.setupGlobalOpacityEvents();
+
         // 进入融合控件按钮
         const startBtn = document.getElementById('start-processing-btn');
         if (startBtn) {
@@ -1169,6 +1326,13 @@ window.ImageWatermark = {
         this.updateWatermarkPreview();
         this.updateWatermarkUploadStatus(true, '文字水印模式');
         this.checkReadyToProcess();
+
+        // 显示底部文字编辑器
+        const textEditorBottom = document.getElementById('text-watermark-editor-bottom');
+        if (textEditorBottom) {
+            textEditorBottom.style.display = 'block';
+        }
+
         if (window.ImageLabUtils) {
             window.ImageLabUtils.showNotification('已启用文字水印模式', 'info');
         }
@@ -1205,7 +1369,7 @@ window.ImageWatermark = {
             preview.innerHTML = `<img src="${this.watermarkImage.src}" alt="水印预览" style="max-width: 100%; max-height: 60px; object-fit: contain;">`;
             typeElement.textContent = '图像水印';
         } else if (this.isTextWatermarkMode) {
-            const text = document.getElementById('watermark-text')?.value || 'WATERMARK';
+            const text = document.getElementById('watermark-text-bottom')?.value || 'WATERMARK';
             preview.innerHTML = `<div style="font-size: 14px; color: #333; font-weight: bold;">${text}</div>`;
             typeElement.textContent = '文字水印';
         } else {
@@ -1340,11 +1504,11 @@ window.ImageWatermark = {
         if (this.watermarkImage) {
             watermark = new this.WatermarkInstance(id, 'image', this.watermarkImage, x, y);
         } else if (this.isTextWatermarkMode) {
-            const text = document.getElementById('watermark-text')?.value || 'WATERMARK';
+            const text = document.getElementById('watermark-text-bottom')?.value || 'WATERMARK';
             watermark = new this.WatermarkInstance(id, 'text', text, x, y);
-            watermark.fontSize = parseFloat(document.getElementById('font-size')?.value || 36);
-            watermark.fontFamily = document.getElementById('font-family')?.value || 'Arial';
-            watermark.fontColor = document.getElementById('font-color')?.value || '#ffffff';
+            watermark.fontSize = parseFloat(document.getElementById('font-size-bottom')?.value || 36);
+            watermark.fontFamily = document.getElementById('font-family-bottom')?.value || 'Arial';
+            watermark.fontColor = document.getElementById('font-color-bottom')?.value || '#ffffff';
         }
 
         if (watermark) {
@@ -1881,6 +2045,115 @@ window.ImageWatermark = {
         this.watermarks.forEach(watermark => {
             this.updateWatermarkControlBox(watermark);
         });
+    },
+
+    // 设置文字编辑事件
+    setupTextEditingEvents: function() {
+        // 底部文字内容输入
+        const watermarkTextInputBottom = document.getElementById('watermark-text-bottom');
+        if (watermarkTextInputBottom) {
+            watermarkTextInputBottom.addEventListener('input', () => {
+                this.updateWatermarkPreview();
+                this.updateAllTextWatermarks();
+            });
+        }
+
+        // 底部字体大小滑块
+        const fontSizeSliderBottom = document.getElementById('font-size-bottom');
+        const fontSizeValueBottom = document.getElementById('font-size-value-bottom');
+        if (fontSizeSliderBottom && fontSizeValueBottom) {
+            fontSizeSliderBottom.addEventListener('input', () => {
+                fontSizeValueBottom.textContent = fontSizeSliderBottom.value + 'px';
+                this.updateAllTextWatermarksProperties();
+            });
+        }
+
+        // 底部字体颜色
+        const fontColorInputBottom = document.getElementById('font-color-bottom');
+        if (fontColorInputBottom) {
+            fontColorInputBottom.addEventListener('change', () => {
+                this.updateAllTextWatermarksProperties();
+            });
+        }
+
+        // 底部字体选择
+        const fontFamilySelectBottom = document.getElementById('font-family-bottom');
+        if (fontFamilySelectBottom) {
+            fontFamilySelectBottom.addEventListener('change', () => {
+                this.updateAllTextWatermarksProperties();
+            });
+        }
+    },
+
+    // 设置全局透明度事件
+    setupGlobalOpacityEvents: function() {
+        const globalOpacitySlider = document.getElementById('global-opacity');
+        const globalOpacityValue = document.getElementById('global-opacity-value');
+
+        if (globalOpacitySlider && globalOpacityValue) {
+            // 防抖定时器
+            let opacityNotificationTimer = null;
+
+            globalOpacitySlider.addEventListener('input', () => {
+                const opacity = parseFloat(globalOpacitySlider.value);
+                globalOpacityValue.textContent = opacity + '%';
+                this.updateAllWatermarksOpacity(opacity / 100, false); // 不显示通知
+
+                // 清除之前的定时器
+                if (opacityNotificationTimer) {
+                    clearTimeout(opacityNotificationTimer);
+                }
+
+                // 设置新的定时器，500ms后显示通知
+                opacityNotificationTimer = setTimeout(() => {
+                    if (window.ImageLabUtils) {
+                        window.ImageLabUtils.showNotification(`水印透明度已调整为 ${Math.round(opacity)}%`, 'info');
+                    }
+                }, 500);
+            });
+        }
+    },
+
+    // 更新所有水印的透明度
+    updateAllWatermarksOpacity: function(opacity, showNotification = true) {
+        this.watermarks.forEach(watermark => {
+            watermark.opacity = opacity;
+        });
+        this.updateWatermark();
+
+        if (showNotification && window.ImageLabUtils) {
+            window.ImageLabUtils.showNotification(`水印透明度已调整为 ${Math.round(opacity * 100)}%`, 'info');
+        }
+    },
+
+    // 更新所有文字水印的属性
+    updateAllTextWatermarksProperties: function() {
+        const fontSize = parseFloat(document.getElementById('font-size-bottom')?.value || 36);
+        const fontFamily = document.getElementById('font-family-bottom')?.value || 'Arial';
+        const fontColor = document.getElementById('font-color-bottom')?.value || '#ffffff';
+
+        this.watermarks.forEach(watermark => {
+            if (watermark.type === 'text') {
+                watermark.fontSize = fontSize;
+                watermark.fontFamily = fontFamily;
+                watermark.fontColor = fontColor;
+            }
+        });
+
+        this.updateWatermark();
+    },
+
+    // 更新所有文字水印的内容
+    updateAllTextWatermarks: function() {
+        const text = document.getElementById('watermark-text-bottom')?.value || 'WATERMARK';
+
+        this.watermarks.forEach(watermark => {
+            if (watermark.type === 'text') {
+                watermark.content = text;
+            }
+        });
+
+        this.updateWatermark();
     }
 };
 

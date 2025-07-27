@@ -44,9 +44,30 @@ window.ImageTransform = {
                         </div>
                     </div>
 
-                    <!-- 可滚动的控制面板 -->
-                    <div class="control-panel-scrollable">
-                        <div class="control-panel">
+                    <!-- 浮动控制面板 -->
+                    <div class="floating-control-panel" id="floating-control-panel">
+                        <div class="panel-header" id="panel-header">
+                            <div class="panel-title">
+                                <span class="panel-icon">🎛️</span>
+                                <span>控制面板</span>
+                            </div>
+                            <div class="panel-actions">
+                                <button class="panel-btn minimize-btn" id="minimize-btn" title="最小化">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                </button>
+
+                                <button class="panel-btn close-btn" id="close-btn" title="关闭面板">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="panel-content" id="panel-content">
+                            <div class="control-panel">
                         <div class="control-tabs">
                             <button class="tab-btn active" data-tab="basic">基础变换</button>
                             <button class="tab-btn" data-tab="color">色彩调节</button>
@@ -153,6 +174,7 @@ window.ImageTransform = {
                                     <button class="transform-btn" data-action="flip-vertical">垂直镜像</button>
                                     <button class="transform-btn" data-action="rotate-90">顺时针90°</button>
                                     <button class="transform-btn" data-action="rotate-180">旋转180°</button>
+                                    <button class="transform-btn secondary" data-action="reset-geometry">重置镜像</button>
                                 </div>
                             </div>
                         </div>
@@ -162,7 +184,26 @@ window.ImageTransform = {
                             <button class="action-btn secondary" id="download-btn">下载结果</button>
                             <button class="action-btn primary" id="new-image-btn">处理新图像</button>
                         </div>
+                            </div>
                         </div>
+
+                        <!-- 缩放手柄 -->
+                        <div class="resize-handle n" data-direction="n"></div>
+                        <div class="resize-handle s" data-direction="s"></div>
+                        <div class="resize-handle w" data-direction="w"></div>
+                        <div class="resize-handle e" data-direction="e"></div>
+                        <div class="resize-handle nw" data-direction="nw"></div>
+                        <div class="resize-handle ne" data-direction="ne"></div>
+                        <div class="resize-handle sw" data-direction="sw"></div>
+                        <div class="resize-handle se" data-direction="se"></div>
+                    </div>
+
+                    <!-- 控制面板切换按钮 -->
+                    <div class="panel-toggle-area">
+                        <button class="panel-toggle-btn" id="panel-toggle-btn" style="display: none;">
+                            <span class="toggle-icon">🎛️</span>
+                            <span class="toggle-text">显示控制面板</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -205,13 +246,207 @@ window.ImageTransform = {
                     margin-bottom: 2rem;
                 }
 
-                /* 可滚动的控制面板 */
-                .control-panel-scrollable {
-                    background: var(--background-light);
+                /* 浮动控制面板 */
+                .floating-control-panel {
+                    position: fixed;
+                    top: 120px;
+                    right: 20px;
+                    width: 380px;
+                    height: 500px;
+                    background: var(--background-white);
                     border-radius: 16px;
-                    max-height: 500px;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+                    border: 2px solid var(--border-color);
+                    z-index: 1000;
+                    transition: box-shadow 0.3s ease;
+                    backdrop-filter: blur(10px);
+                    overflow: hidden;
+                    min-width: 280px;
+                    min-height: 300px;
+                    max-width: 800px;
+                    max-height: calc(100vh - 40px);
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .floating-control-panel.minimized {
+                    height: 50px;
+                    overflow: hidden;
+                }
+
+                .floating-control-panel.hidden {
+                    transform: translateX(100%);
+                    opacity: 0;
+                    pointer-events: none;
+                }
+
+                .floating-control-panel.resizing {
+                    transition: none;
+                    user-select: none;
+                }
+
+                /* 缩放手柄 */
+                .resize-handle {
+                    position: absolute;
+                    background: transparent;
+                    z-index: 10;
+                }
+
+                .resize-handle.n {
+                    top: -3px;
+                    left: 10px;
+                    right: 10px;
+                    height: 6px;
+                    cursor: n-resize;
+                }
+
+                .resize-handle.s {
+                    bottom: -3px;
+                    left: 10px;
+                    right: 10px;
+                    height: 6px;
+                    cursor: s-resize;
+                }
+
+                .resize-handle.w {
+                    left: -3px;
+                    top: 10px;
+                    bottom: 10px;
+                    width: 6px;
+                    cursor: w-resize;
+                }
+
+                .resize-handle.e {
+                    right: -3px;
+                    top: 10px;
+                    bottom: 10px;
+                    width: 6px;
+                    cursor: e-resize;
+                }
+
+                .resize-handle.nw {
+                    top: -3px;
+                    left: -3px;
+                    width: 12px;
+                    height: 12px;
+                    cursor: nw-resize;
+                }
+
+                .resize-handle.ne {
+                    top: -3px;
+                    right: -3px;
+                    width: 12px;
+                    height: 12px;
+                    cursor: ne-resize;
+                }
+
+                .resize-handle.sw {
+                    bottom: -3px;
+                    left: -3px;
+                    width: 12px;
+                    height: 12px;
+                    cursor: sw-resize;
+                }
+
+                .resize-handle.se {
+                    bottom: -3px;
+                    right: -3px;
+                    width: 12px;
+                    height: 12px;
+                    cursor: se-resize;
+                }
+
+                .resize-handle:hover {
+                    background: rgba(102, 126, 234, 0.3);
+                }
+
+                .panel-header {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 12px 16px;
+                    background: var(--primary-color);
+                    color: white;
+                    border-radius: 16px 16px 0 0;
+                    cursor: move;
+                    user-select: none;
+                    flex-shrink: 0; /* 防止标题栏被压缩 */
+                }
+
+                .panel-title {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-weight: 600;
+                    font-size: 14px;
+                }
+
+                .panel-icon {
+                    font-size: 16px;
+                }
+
+                .panel-actions {
+                    display: flex;
+                    gap: 4px;
+                }
+
+                .panel-btn {
+                    width: 24px;
+                    height: 24px;
+                    border: none;
+                    background: rgba(255, 255, 255, 0.2);
+                    color: white;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    transition: background 0.2s ease;
+                }
+
+                .panel-btn:hover {
+                    background: rgba(255, 255, 255, 0.3);
+                }
+
+                .panel-content {
+                    flex: 1;
                     overflow-y: auto;
                     padding: 0;
+                    min-height: 0; /* 重要：允许flex子元素缩小 */
+                }
+
+                /* 控制面板切换按钮 */
+                .panel-toggle-area {
+                    position: fixed;
+                    top: 120px;
+                    right: 20px;
+                    z-index: 999;
+                }
+
+                .panel-toggle-btn {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 12px 16px;
+                    background: var(--primary-color);
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+                    transition: all 0.3s ease;
+                    font-size: 14px;
+                    font-weight: 500;
+                }
+
+                .panel-toggle-btn:hover {
+                    background: var(--primary-hover);
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+                }
+
+                .toggle-icon {
+                    font-size: 16px;
                 }
 
                 .upload-btn {
@@ -243,9 +478,9 @@ window.ImageTransform = {
                 }
                 
                 .control-panel {
-                    background: var(--background-light);
-                    border-radius: 12px;
-                    padding: 1.5rem;
+                    background: transparent;
+                    border-radius: 0;
+                    padding: 16px;
                 }
                 
                 .control-tabs {
@@ -331,6 +566,25 @@ window.ImageTransform = {
                     border-radius: 6px;
                     cursor: pointer;
                     margin-right: 0.5rem;
+                    margin-bottom: 0.5rem;
+                    transition: all 0.3s ease;
+                }
+
+                .transform-btn:hover {
+                    background: var(--primary-hover);
+                    transform: translateY(-1px);
+                }
+
+                .transform-btn.secondary {
+                    background: var(--background-light);
+                    color: var(--text-color);
+                    border: 1px solid var(--border-color);
+                }
+
+                .transform-btn.secondary:hover {
+                    background: var(--border-color);
+                    border-color: var(--primary-color);
+                    color: var(--primary-color);
                 }
                 
                 .action-buttons {
@@ -366,8 +620,18 @@ window.ImageTransform = {
                         grid-template-columns: 1fr;
                     }
 
-                    .control-panel-scrollable {
-                        max-height: 400px;
+                    .floating-control-panel {
+                        position: fixed;
+                        top: 80px;
+                        left: 10px;
+                        right: 10px;
+                        width: auto;
+                        max-height: calc(100vh - 100px);
+                    }
+
+                    .panel-toggle-area {
+                        top: 80px;
+                        right: 10px;
                     }
 
                     .control-group {
@@ -381,27 +645,46 @@ window.ImageTransform = {
                 }
 
                 /* 滚动条样式 */
-                .control-panel-scrollable::-webkit-scrollbar {
+                .panel-content::-webkit-scrollbar {
                     width: 8px;
                 }
 
-                .control-panel-scrollable::-webkit-scrollbar-track {
-                    background: var(--background-light);
+                .panel-content::-webkit-scrollbar-track {
+                    background: rgba(0, 0, 0, 0.05);
                     border-radius: 4px;
+                    margin: 4px 0;
                 }
 
-                .control-panel-scrollable::-webkit-scrollbar-thumb {
+                .panel-content::-webkit-scrollbar-thumb {
                     background: var(--border-color);
                     border-radius: 4px;
+                    transition: background 0.2s ease;
                 }
 
-                .control-panel-scrollable::-webkit-scrollbar-thumb:hover {
+                .panel-content::-webkit-scrollbar-thumb:hover {
                     background: var(--primary-color);
                 }
 
+                /* 确保内容有适当的内边距，避免与滚动条重叠 */
+                .control-panel {
+                    padding-right: 12px;
+                }
+
                 /* 深色主题支持 */
-                [data-theme="dark"] .control-panel-scrollable {
+                [data-theme="dark"] .floating-control-panel {
+                    background: var(--background-white);
+                    border-color: var(--border-color);
+                }
+
+                [data-theme="dark"] .panel-content::-webkit-scrollbar-track {
                     background: var(--background-light);
+                }
+
+                /* 拖拽时的样式 */
+                .floating-control-panel.dragging {
+                    transition: none;
+                    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+                    transform: scale(1.02);
                 }
             </style>
         `;
@@ -449,6 +732,9 @@ window.ImageTransform = {
 
         // 操作按钮事件监听器
         this.setupActionButtons();
+
+        // 浮动面板功能
+        this.setupFloatingPanel();
     },
     
     handleImageUpload: function(event) {
@@ -551,6 +837,9 @@ window.ImageTransform = {
             case 'rotate-180':
                 this.rotateImage(180);
                 break;
+            case 'reset-geometry':
+                this.resetGeometry();
+                break;
         }
     },
     
@@ -570,6 +859,32 @@ window.ImageTransform = {
     
     resetImage: function() {
         this.ctx.putImageData(this.originalImageData, 0, 0);
+    },
+
+    resetGeometry: function() {
+        // 重置到原始图像状态
+        this.ctx.putImageData(this.originalImageData, 0, 0);
+
+        // 重置几何变换相关的滑块
+        const translateXSlider = document.getElementById('translate-x');
+        const translateYSlider = document.getElementById('translate-y');
+        const translateXValue = document.getElementById('translate-x-value');
+        const translateYValue = document.getElementById('translate-y-value');
+
+        if (translateXSlider) {
+            translateXSlider.value = 0;
+            translateXValue.textContent = '0px';
+        }
+
+        if (translateYSlider) {
+            translateYSlider.value = 0;
+            translateYValue.textContent = '0px';
+        }
+
+        // 显示成功提示
+        if (window.ImageLabUtils) {
+            window.ImageLabUtils.showNotification('镜像和几何变换已重置', 'success', 2000);
+        }
     },
     
     flipHorizontal: function() {
@@ -1000,6 +1315,170 @@ window.ImageTransform = {
         if (window.ImageLabUtils) {
             window.ImageLabUtils.showNotification('已重置，可以上传新图像', 'info');
         }
+    },
+
+    setupFloatingPanel: function() {
+        const panel = document.getElementById('floating-control-panel');
+        const panelHeader = document.getElementById('panel-header');
+        const minimizeBtn = document.getElementById('minimize-btn');
+        const closeBtn = document.getElementById('close-btn');
+        const toggleBtn = document.getElementById('panel-toggle-btn');
+
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+
+        // 拖拽功能
+        panelHeader.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.panel-btn')) return; // 不在按钮上才能拖拽
+
+            isDragging = true;
+            panel.classList.add('dragging');
+
+            const rect = panel.getBoundingClientRect();
+            dragOffset.x = e.clientX - rect.left;
+            dragOffset.y = e.clientY - rect.top;
+
+            document.addEventListener('mousemove', handleDrag);
+            document.addEventListener('mouseup', handleDragEnd);
+            e.preventDefault();
+        });
+
+        function handleDrag(e) {
+            if (!isDragging) return;
+
+            const x = e.clientX - dragOffset.x;
+            const y = e.clientY - dragOffset.y;
+
+            // 限制在视窗内
+            const maxX = window.innerWidth - panel.offsetWidth;
+            const maxY = window.innerHeight - panel.offsetHeight;
+
+            const constrainedX = Math.max(0, Math.min(x, maxX));
+            const constrainedY = Math.max(0, Math.min(y, maxY));
+
+            panel.style.left = constrainedX + 'px';
+            panel.style.top = constrainedY + 'px';
+            panel.style.right = 'auto'; // 取消right定位
+        }
+
+        function handleDragEnd() {
+            isDragging = false;
+            panel.classList.remove('dragging');
+            document.removeEventListener('mousemove', handleDrag);
+            document.removeEventListener('mouseup', handleDragEnd);
+        }
+
+        // 最小化功能
+        minimizeBtn.addEventListener('click', () => {
+            panel.classList.toggle('minimized');
+            const isMinimized = panel.classList.contains('minimized');
+            minimizeBtn.innerHTML = isMinimized ?
+                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>' :
+                '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="5" y1="12" x2="19" y2="12"></line></svg>';
+            minimizeBtn.title = isMinimized ? '还原' : '最小化';
+        });
+
+        // 缩放功能
+        this.setupResizeHandles(panel);
+
+        // 关闭功能
+        closeBtn.addEventListener('click', () => {
+            panel.classList.add('hidden');
+            toggleBtn.style.display = 'flex';
+        });
+
+        // 显示面板功能
+        toggleBtn.addEventListener('click', () => {
+            panel.classList.remove('hidden');
+            toggleBtn.style.display = 'none';
+        });
+
+        // 双击标题栏重置位置
+        panelHeader.addEventListener('dblclick', () => {
+            panel.style.top = '120px';
+            panel.style.right = '20px';
+            panel.style.left = 'auto';
+            if (window.ImageLabUtils) {
+                window.ImageLabUtils.showNotification('面板位置已重置', 'info', 1500);
+            }
+        });
+
+        // 窗口大小改变时调整面板位置
+        window.addEventListener('resize', () => {
+            const rect = panel.getBoundingClientRect();
+            if (rect.right > window.innerWidth || rect.bottom > window.innerHeight) {
+                panel.style.top = '120px';
+                panel.style.right = '20px';
+                panel.style.left = 'auto';
+            }
+        });
+    },
+
+    setupResizeHandles: function(panel) {
+        const resizeHandles = panel.querySelectorAll('.resize-handle');
+
+        resizeHandles.forEach(handle => {
+            handle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const direction = handle.dataset.direction;
+                const startX = e.clientX;
+                const startY = e.clientY;
+                const startWidth = parseInt(window.getComputedStyle(panel).width, 10);
+                const startHeight = parseInt(window.getComputedStyle(panel).height, 10);
+                const startLeft = panel.offsetLeft;
+                const startTop = panel.offsetTop;
+
+                panel.classList.add('resizing');
+
+                const handleMouseMove = (e) => {
+                    const deltaX = e.clientX - startX;
+                    const deltaY = e.clientY - startY;
+
+                    let newWidth = startWidth;
+                    let newHeight = startHeight;
+                    let newLeft = startLeft;
+                    let newTop = startTop;
+
+                    // 根据方向调整尺寸和位置
+                    if (direction.includes('e')) {
+                        newWidth = Math.max(280, Math.min(800, startWidth + deltaX));
+                    }
+                    if (direction.includes('w')) {
+                        newWidth = Math.max(280, Math.min(800, startWidth - deltaX));
+                        newLeft = startLeft + (startWidth - newWidth);
+                    }
+                    if (direction.includes('s')) {
+                        newHeight = Math.max(300, Math.min(window.innerHeight - 40, startHeight + deltaY));
+                    }
+                    if (direction.includes('n')) {
+                        newHeight = Math.max(300, Math.min(window.innerHeight - 40, startHeight - deltaY));
+                        newTop = startTop + (startHeight - newHeight);
+                    }
+
+                    // 确保面板不会超出屏幕边界
+                    newLeft = Math.max(0, Math.min(window.innerWidth - newWidth, newLeft));
+                    newTop = Math.max(0, Math.min(window.innerHeight - newHeight, newTop));
+
+                    panel.style.width = newWidth + 'px';
+                    panel.style.height = newHeight + 'px';
+                    panel.style.left = newLeft + 'px';
+                    panel.style.top = newTop + 'px';
+                    panel.style.right = 'auto';
+                    panel.style.bottom = 'auto';
+                };
+
+                const handleMouseUp = () => {
+                    panel.classList.remove('resizing');
+                    document.removeEventListener('mousemove', handleMouseMove);
+                    document.removeEventListener('mouseup', handleMouseUp);
+                };
+
+                document.addEventListener('mousemove', handleMouseMove);
+                document.addEventListener('mouseup', handleMouseUp);
+            });
+        });
     },
 
     cleanup: function() {

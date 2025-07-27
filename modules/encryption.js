@@ -59,10 +59,10 @@ window.ImageEncryption = {
                     </div>
 
                     <div class="encryption-methods">
-                        <div class="method-tabs">
-                            <button class="tab-btn active" data-method="rowcol">行列置换</button>
-                            <button class="tab-btn" data-method="arnold">Arnold变换</button>
-                        </div>
+                                <div class="method-tabs">
+                                    <button class="tab-btn active" data-method="rowcol">行列置换</button>
+                                    <button class="tab-btn" data-method="arnold">Arnold变换</button>
+                                </div>
 
                         <!-- 行列置换 -->
                         <div class="method-content active" id="rowcol-method">
@@ -115,7 +115,6 @@ window.ImageEncryption = {
                                     <button class="encrypt-btn secondary" data-action="arnold-demo">演示过程</button>
                                 </div>
                             </div>
-                        </div>
                     </div>
 
                     <!-- 图像显示区域 -->
@@ -169,6 +168,8 @@ window.ImageEncryption = {
                     max-width: 1000px;
                     margin: 0 auto;
                 }
+
+
 
                 /* 裁剪区域样式 */
                 .crop-section {
@@ -540,7 +541,7 @@ window.ImageEncryption = {
                     .image-display {
                         grid-template-columns: 1fr;
                     }
-                    
+
                     .control-group {
                         flex-direction: column;
                         align-items: stretch;
