@@ -186,12 +186,6 @@ window.ImageWatermark = {
                                     <div class="watermark-overlay" id="watermark-overlay">
                                         <!-- 动态生成的水印控制框将在这里 -->
                                     </div>
-                                    <div class="click-hint" id="click-hint">
-                                        <div class="hint-content">
-                                            <p>💡 点击"创建水印"按钮，然后在此处点击放置水印</p>
-                                            <p>🖱️ 拖拽水印可移动位置，拖拽边角可缩放，拖拽旋转手柄可旋转</p>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
