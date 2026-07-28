@@ -74,7 +74,7 @@ window.ImageLabUtils = {
     getNotificationColor: function(type) {
         const colors = {
             'info': '#0ea5e9',
-            'success': '#28a745',
+            'success': '#0ea5e9',
             'warning': '#ffc107',
             'error': '#dc3545'
         };

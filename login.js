@@ -1,4 +1,4 @@
-// 图像处理实验室 - 登录功能
+﻿// 图像处理实验室 - 登录功能
 document.addEventListener('DOMContentLoaded', function() {
     // DOM 元素
     const loginForm = document.getElementById('login-form');
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 sessionStorage.setItem(AUTH_TOKEN, 'authenticated');
                 
                 // 添加成功动画
-                loginBtn.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                loginBtn.style.background = 'linear-gradient(135deg, #0ea5e9, #38bdf8)';
                 loginBtn.innerHTML = '<span>✓ 登录成功</span>';
                 
                 setTimeout(() => {
