@@ -1,4 +1,4 @@
-/* 图像处理实验室 - 主应用样式 */
+﻿/* 图像处理实验室 - 主应用样式 */
 
 /* 主题变量 */
 :root {
@@ -94,7 +94,7 @@ body {
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
     transition: all 0.3s ease;
     font-size: 14px;
     font-weight: 500;
@@ -104,7 +104,7 @@ body {
 .panel-toggle-btn:hover {
     background: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 6px 16px rgba(14, 165, 233, 0.4);
 }
 
 .panel-toggle-btn .toggle-icon {
@@ -118,12 +118,12 @@ body {
 /* 深色主题下的面板切换按钮 */
 [data-theme="dark"] .panel-toggle-btn {
     background: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
 }
 
 [data-theme="dark"] .panel-toggle-btn:hover {
     background: var(--primary-hover);
-    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 6px 16px rgba(14, 165, 233, 0.5);
 }
 
 /* 加载动画 */
@@ -389,7 +389,7 @@ body {
 
 /* 选择文本样式 */
 ::selection {
-    background: rgba(102, 126, 234, 0.2);
+    background: rgba(14, 165, 233, 0.2);
     color: var(--text-color);
 }
 
