@@ -1,4 +1,4 @@
-// 图像处理实验室 - 工具函数
+﻿// 图像处理实验室 - 工具函数
 window.ImageLabUtils = {
     
     // 显示通知消息
@@ -73,7 +73,7 @@ window.ImageLabUtils = {
     
     getNotificationColor: function(type) {
         const colors = {
-            'info': '#667eea',
+            'info': '#0ea5e9',
             'success': '#28a745',
             'warning': '#ffc107',
             'error': '#dc3545'
@@ -119,7 +119,7 @@ window.ImageLabUtils = {
                         width: 50px;
                         height: 50px;
                         border: 4px solid #e1e5e9;
-                        border-top: 4px solid #667eea;
+                        border-top: 4px solid #0ea5e9;
                         border-radius: 50%;
                         animation: spin 1s linear infinite;
                         margin-bottom: 1rem;
@@ -181,7 +181,7 @@ window.ImageLabUtils = {
                     ">取消</button>
                     <button id="confirm-ok" style="
                         padding: 0.75rem 1.5rem;
-                        background: #667eea;
+                        background: #0ea5e9;
                         border: none;
                         border-radius: 8px;
                         cursor: pointer;
@@ -263,7 +263,7 @@ window.ImageLabUtils = {
             top: 50%;
             right: 20px;
             transform: translateY(-50%);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0ea5e9 0%, #bae6fd 100%);
             color: white;
             padding: 16px 20px;
             border-radius: 12px;
